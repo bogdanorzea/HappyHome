@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:id="@+id/nav_menu_top"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home_details"
+            android:icon="@drawable/ic_round_home"
+            android:title="Home details" />
+        <item
+            android:id="@+id/nav_bills"
+            android:icon="@drawable/ic_round_attach_money"
+            android:title="Utility bills" />
+        <item
+            android:id="@+id/nav_readings"
+            android:icon="@drawable/ic_round_power"
+            android:title="Meter readings" />
+        <item
+            android:id="@+id/nav_repairs"
+            android:icon="@drawable/ic_round_build"
+            android:title="Repairs needed" />
+    </group>
+
+    <group
+        android:id="@+id/nav_menu_bottom"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_round_settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout" />
+    </group>
+
+</menu>

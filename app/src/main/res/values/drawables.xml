@@ -1,0 +1,7 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <item name="ic_round_home" type="drawable">@android:drawable/ic_menu_myplaces</item>
+    <item name="ic_round_attach_money" type="drawable">@android:drawable/ic_menu_agenda</item>
+    <item name="ic_round_power" type="drawable">@android:drawable/ic_lock_idle_charging</item>
+    <item name="ic_round_build" type="drawable">@android:drawable/ic_menu_manage</item>
+    <item name="ic_round_settings" type="drawable">@android:drawable/ic_menu_preferences</item>
+</resources>
