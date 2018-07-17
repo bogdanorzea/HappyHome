@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,7 +22,6 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
 
@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int RC_SIGN_IN = 1;
-    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
@@ -40,7 +39,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -146,24 +144,33 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
         switch (id) {
             case R.id.nav_home_details:
+                HomesFragment homesFragment = new HomesFragment();
 
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_placeholder, homesFragment)
+                        .commit();
                 break;
             case R.id.nav_bills:
+                UtilityBillsFragment utilityBillsFragment = new UtilityBillsFragment();
 
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_placeholder, utilityBillsFragment)
+                        .commit();
                 break;
             case R.id.nav_readings:
-
+                Toast.makeText(this, "Meter readings section will be added soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_repairs:
-
+                Toast.makeText(this, "Repairs section will be added soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_logout:
                 AuthUI.getInstance().signOut(this);
                 break;
             case R.id.nav_settings:
-
+                Toast.makeText(this, "More settings will be added soon", Toast.LENGTH_SHORT).show();
                 break;
         }
 
