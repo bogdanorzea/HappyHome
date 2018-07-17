@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,7 +58,7 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 if (user != null) {
-                    onSignInInitialize(user.getDisplayName(), user.getPhotoUrl());
+                    onSignInInitialize(user.getDisplayName(), user.getPhotoUrl(), user.getEmail());
 
                     Toast.makeText(MainActivity.this, "Welcome!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -79,13 +80,17 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void onSignInInitialize(String displayName, Uri photoUrl) {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        TextView userNameTextView = navigationView.getHeaderView(0).findViewById(R.id.user_name);
-        ImageView userPhotoImageView = navigationView.getHeaderView(0).findViewById(R.id.user_photo);
+    private void onSignInInitialize(String displayName, Uri photoUrl, String userEmail) {
+        View headerView = ((NavigationView) findViewById(R.id.nav_view)).getHeaderView(0);
 
+        TextView userNameTextView = headerView.findViewById(R.id.user_name);
         userNameTextView.setText(displayName);
+
+        ImageView userPhotoImageView = headerView.findViewById(R.id.user_photo);
         Glide.with(this).load(photoUrl).into(userPhotoImageView);
+
+        TextView userEmailTextView = headerView.findViewById(R.id.user_email);
+        userEmailTextView.setText(userEmail);
     }
 
     @Override
