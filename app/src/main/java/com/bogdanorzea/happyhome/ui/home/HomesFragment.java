@@ -1,6 +1,7 @@
-package com.bogdanorzea.happyhome;
+package com.bogdanorzea.happyhome.ui.home;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.bogdanorzea.happyhome.R;
+import com.bogdanorzea.happyhome.data.Home;
+import com.bogdanorzea.happyhome.ui.home.HomeAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -57,32 +61,11 @@ public class HomesFragment extends Fragment {
         addHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference homeReference = FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child("homes")
-                        .push();
-
-                homeReference.child("members")
-                        .child(mUserUid)
-                        .setValue("editor");
-
-                homeReference.child("name")
-                        .setValue("Unknown house name");
-
-                homeReference.child("location")
-                        .setValue("Unknown location");
-
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child("members")
-                        .child(mUserUid)
-                        .child("homes")
-                        .child(homeReference.getKey())
-                        .setValue("true");
+                Intent intent = new Intent(getContext(), HomeEditorActivity.class);
+                intent.putExtra("userUID", mUserUid);
+                startActivity(intent);
             }
         });
-
-        attachDatabaseReadListener();
 
         return rootView;
     }
@@ -145,5 +128,13 @@ public class HomesFragment extends Fragment {
         super.onPause();
 
         detachDatabaseReadListener();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mHomeAdapter.clear();
+        attachDatabaseReadListener();
     }
 }

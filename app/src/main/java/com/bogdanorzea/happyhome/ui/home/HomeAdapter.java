@@ -1,4 +1,4 @@
-package com.bogdanorzea.happyhome;
+package com.bogdanorzea.happyhome.ui.home;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.bogdanorzea.happyhome.data.Home;
 
 import java.util.List;
 
@@ -27,10 +29,10 @@ public class HomeAdapter extends ArrayAdapter<Home> {
         Home home = getItem(position);
 
         TextView name = convertView.findViewById(android.R.id.text1);
-        name.setText(home.name);
+        name.setText(home.getName());
 
         TextView location = convertView.findViewById(android.R.id.text2);
-        location.setText(home.location);
+        location.setText(home.getLocation());
 
         return convertView;
     }
