@@ -12,20 +12,22 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomesFragment extends Fragment {
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mHomesDatabaseReference;
-    private DatabaseReference mMembersDatabaseReference;
+
+    // Current user Firebase UID
+    private final String mUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+    private DatabaseReference mMemberHomesDatabaseReference;
     private ChildEventListener mChildEventListener;
     private HomeAdapter mHomeAdapter;
 
@@ -37,9 +39,11 @@ public class HomesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mHomesDatabaseReference = mFirebaseDatabase.getReference().child("homes");
-        mMembersDatabaseReference = mFirebaseDatabase.getReference().child("members");
+        mMemberHomesDatabaseReference = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("members")
+                .child(mUserUid)
+                .child("homes");
 
         View rootView = inflater.inflate(R.layout.fragment_homes, container, false);
 
@@ -53,20 +57,28 @@ public class HomesFragment extends Fragment {
         addHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                DatabaseReference homeReference = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("homes")
+                        .push();
 
-                if (user != null) {
-                    String userUid = user.getUid();
-                    DatabaseReference newHome = mHomesDatabaseReference.push();
-                    newHome.child("members")
-                            .child(userUid)
-                            .setValue("editor");
+                homeReference.child("members")
+                        .child(mUserUid)
+                        .setValue("editor");
 
-                    mMembersDatabaseReference.child(userUid)
-                            .child("homes")
-                            .child(newHome.getKey())
-                            .setValue("true");
-                }
+                homeReference.child("name")
+                        .setValue("Unknown house name");
+
+                homeReference.child("location")
+                        .setValue("Unknown location");
+
+                FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("members")
+                        .child(mUserUid)
+                        .child("homes")
+                        .child(homeReference.getKey())
+                        .setValue("true");
             }
         });
 
@@ -80,9 +92,24 @@ public class HomesFragment extends Fragment {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    Home home = dataSnapshot.getValue(Home.class);
+                    String homeID = dataSnapshot.getKey();
 
-                    mHomeAdapter.add(home);
+                    FirebaseDatabase.getInstance()
+                            .getReference()
+                            .child("homes")
+                            .child(homeID)
+                            .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Home home = dataSnapshot.getValue(Home.class);
+                            mHomeAdapter.add(home);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
                 @Override
@@ -102,13 +129,13 @@ public class HomesFragment extends Fragment {
                 }
             };
 
-            mHomesDatabaseReference.addChildEventListener(mChildEventListener);
+            mMemberHomesDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mHomesDatabaseReference.removeEventListener(mChildEventListener);
+            mMemberHomesDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
