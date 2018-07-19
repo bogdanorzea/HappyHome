@@ -1,10 +1,18 @@
 package com.bogdanorzea.happyhome.data;
 
 public class Home {
-    String location;
-    String name;
-
+    private String id;
+    private String location;
+    private String name;
     public Home() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getLocation() {
