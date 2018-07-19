@@ -98,18 +98,18 @@ public class HomesFragment extends Fragment {
                             .getReference()
                             .child("homes")
                             .child(homeID)
-                            .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Home home = dataSnapshot.getValue(Home.class);
-                            mHomeAdapter.add(home);
-                        }
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Home home = dataSnapshot.getValue(Home.class);
+                                    mHomeAdapter.add(home);
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
+                                }
+                            });
                 }
 
                 @Override
