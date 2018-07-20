@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bogdanorzea.happyhome.ui.bills.UtilityBillsFragment;
+import com.bogdanorzea.happyhome.ui.utilities.UtilitiesFragment;
 import com.bogdanorzea.happyhome.ui.home.HomesFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-
     }
 
     private void onSignInInitialize(String displayName, Uri photoUrl, String userEmail) {
@@ -156,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                         .commit();
                 break;
             case R.id.nav_bills:
-                UtilityBillsFragment utilityBillsFragment = new UtilityBillsFragment();
+                UtilitiesFragment utilityBillsFragment = new UtilitiesFragment();
 
                 fragmentManager.beginTransaction()
                         .replace(R.id.fragment_placeholder, utilityBillsFragment)

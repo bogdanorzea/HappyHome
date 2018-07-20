@@ -37,7 +37,7 @@ public class HomeEditorActivity extends AppCompatActivity {
 
         final EditText homeName = findViewById(R.id.home_name);
         final EditText homeLocation = findViewById(R.id.home_location);
-        Button addHomeButton = findViewById(R.id.add_home_button);
+        Button addHomeButton = findViewById(R.id.add_button);
 
         addHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,7 @@ public class HomeEditorActivity extends AppCompatActivity {
                         .child(mUserUid)
                         .child("homes")
                         .child(homeReference.getKey())
-                        .setValue("true");
+                        .setValue(true);
 
                 finish();
             }

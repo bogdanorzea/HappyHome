@@ -54,7 +54,7 @@ public class HomesFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_homes, container, false);
 
-        FloatingActionButton addHomeButton = rootView.findViewById(R.id.add_home_button);
+        FloatingActionButton addHomeButton = rootView.findViewById(R.id.fab);
         ListView homesListView = rootView.findViewById(R.id.list_view);
 
         List<Home> homeList = new ArrayList();
