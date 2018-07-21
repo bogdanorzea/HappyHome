@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bogdanorzea.happyhome.ui.repairs.RepairsFragment;
 import com.bogdanorzea.happyhome.ui.utilities.UtilitiesFragment;
 import com.bogdanorzea.happyhome.ui.home.HomesFragment;
 import com.bumptech.glide.Glide;
@@ -165,7 +166,11 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "Meter readings section will be added soon", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_repairs:
-                Toast.makeText(this, "Repairs section will be added soon", Toast.LENGTH_SHORT).show();
+                RepairsFragment repairsFragment = new RepairsFragment();
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_placeholder, repairsFragment)
+                        .commit();
                 break;
             case R.id.nav_logout:
                 AuthUI.getInstance().signOut(this);

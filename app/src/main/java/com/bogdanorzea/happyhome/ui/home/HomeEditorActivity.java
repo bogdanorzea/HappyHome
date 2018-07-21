@@ -27,7 +27,6 @@ public class HomeEditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra("userUID")) {
@@ -37,9 +36,9 @@ public class HomeEditorActivity extends AppCompatActivity {
 
         final EditText homeName = findViewById(R.id.home_name);
         final EditText homeLocation = findViewById(R.id.home_location);
-        Button addHomeButton = findViewById(R.id.add_button);
+        Button addButton = findViewById(R.id.add_button);
 
-        addHomeButton.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = homeName.getText().toString();

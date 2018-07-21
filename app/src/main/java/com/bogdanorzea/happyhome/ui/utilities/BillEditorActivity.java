@@ -39,7 +39,7 @@ public class BillEditorActivity extends AppCompatActivity {
         final EditText issueDate = findViewById(R.id.issue_date);
         final EditText dueDate = findViewById(R.id.due_date);
         final EditText billValue = findViewById(R.id.bill_value);
-        Button addHomeButton = findViewById(R.id.add_button);
+        Button addButton = findViewById(R.id.add_button);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -52,7 +52,7 @@ public class BillEditorActivity extends AppCompatActivity {
             if (intent.hasExtra("billId")) {
                 mBillId = intent.getStringExtra("billId");
 
-                addHomeButton.setText("Update");
+                addButton.setText("Update");
                 FirebaseDatabase.getInstance()
                         .getReference()
                         .child("bills")
@@ -75,7 +75,7 @@ public class BillEditorActivity extends AppCompatActivity {
             }
         }
 
-        addHomeButton.setOnClickListener(new View.OnClickListener() {
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String issueDateString = issueDate.getText().toString();
