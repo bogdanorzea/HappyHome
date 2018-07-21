@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bogdanorzea.happyhome.ui.meters.MetersFragment;
 import com.bogdanorzea.happyhome.ui.repairs.RepairsFragment;
 import com.bogdanorzea.happyhome.ui.utilities.UtilitiesFragment;
 import com.bogdanorzea.happyhome.ui.home.HomesFragment;
@@ -163,7 +164,11 @@ public class MainActivity extends AppCompatActivity
                         .commit();
                 break;
             case R.id.nav_readings:
-                Toast.makeText(this, "Meter readings section will be added soon", Toast.LENGTH_SHORT).show();
+                MetersFragment metersFragment = new MetersFragment();
+
+                fragmentManager.beginTransaction()
+                        .replace(R.id.fragment_placeholder, metersFragment)
+                        .commit();
                 break;
             case R.id.nav_repairs:
                 RepairsFragment repairsFragment = new RepairsFragment();
