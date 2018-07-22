@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Utility;
 
 import java.util.List;
@@ -23,20 +24,17 @@ public class UtilityAdapter extends ArrayAdapter<Utility> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = ((Activity) getContext()).getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_item, parent, false);
         }
 
         Utility utility = getItem(position);
 
-        // Utility name
-        TextView name = convertView.findViewById(android.R.id.text1);
+        TextView name = convertView.findViewById(R.id.text1);
         name.setText(utility.name);
 
-        // Utility location
-        TextView location = convertView.findViewById(android.R.id.text2);
+        TextView location = convertView.findViewById(R.id.text2);
         location.setText(utility.location);
 
-        // Tag the view with the Firebase ID
         convertView.setTag(utility.id);
 
         return convertView;

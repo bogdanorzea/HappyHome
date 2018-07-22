@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Reading;
 
 import java.util.List;
@@ -23,20 +24,17 @@ public class ReadingAdapter extends ArrayAdapter<Reading> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = ((Activity) getContext()).getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_item, parent, false);
         }
 
         Reading item = getItem(position);
 
-        // Reading date
-        TextView date = convertView.findViewById(android.R.id.text1);
+        TextView date = convertView.findViewById(R.id.text1);
         date.setText(item.date);
 
-        // Reading value
-        TextView value = convertView.findViewById(android.R.id.text2);
+        TextView value = convertView.findViewById(R.id.text2);
         value.setText(Double.toString(item.value));
 
-        // Tag the view with the Firebase ID
         convertView.setTag(item.id);
 
         return convertView;

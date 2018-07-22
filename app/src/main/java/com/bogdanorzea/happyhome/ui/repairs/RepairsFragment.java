@@ -69,8 +69,8 @@ public class RepairsFragment extends Fragment {
             }
         });
 
-        List<Repair> utilityList = new ArrayList();
-        mAdapter = new RepairAdapter(getContext(), utilityList);
+        List<Repair> arrayList = new ArrayList();
+        mAdapter = new RepairAdapter(getContext(), arrayList);
 
         ListView listView = rootView.findViewById(R.id.list_view);
         TextView emptyView = rootView.findViewById(R.id.empty_view);
@@ -99,24 +99,25 @@ public class RepairsFragment extends Fragment {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String repairId = dataSnapshot.getKey();
+                    String snapshotKey = dataSnapshot.getKey();
                     mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
                             .child(REPAIRS_PATH)
-                            .child(repairId)
+                            .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Repair repair = dataSnapshot.getValue(Repair.class);
-                                    if (repair == null) {
+                                    Repair object = dataSnapshot.getValue(Repair.class);
+
+                                    if (object == null) {
                                         mProgressBar.setVisibility(View.INVISIBLE);
                                         return;
                                     }
 
-                                    repair.id = dataSnapshot.getKey();
-                                    mAdapter.add(repair);
+                                    object.id = dataSnapshot.getKey();
+                                    mAdapter.add(object);
 
                                     mProgressBar.setVisibility(View.INVISIBLE);
                                 }
@@ -148,7 +149,6 @@ public class RepairsFragment extends Fragment {
             mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
-
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {

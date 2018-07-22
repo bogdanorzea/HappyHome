@@ -17,9 +17,12 @@ import timber.log.Timber;
 
 public class FirebaseUtils {
 
+    public static final String MEMBERS_PATH = "members";
+    public static final String HOMES_PATH = "homes";
+    public static final String UTILITIES_PATH = "utilities";
+    public static final String METERS_PATH = "meters";
     public static final String REPAIRS_PATH = "repairs";
     public static final String REPAIR_PHOTOS_PATH = "repair_photos";
-    public static final String HOMES_PATH = "homes";
 
     public static class Repair {
 

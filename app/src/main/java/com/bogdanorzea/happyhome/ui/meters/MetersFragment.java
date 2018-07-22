@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Meter;
@@ -28,11 +30,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
+
 public class MetersFragment extends Fragment {
     private final String mUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private MeterAdapter mAdapter;
     private ChildEventListener mChildEventListener;
-    private DatabaseReference mHomeMetersDatabaseReference;
+    private DatabaseReference mDatabaseReference;
+    private ProgressBar mProgressBar;
 
     public MetersFragment() {
         // Required empty public constructor
@@ -41,16 +47,16 @@ public class MetersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_meters, container, false);
+        View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(getString(R.string.current_home_id), "");
 
-        mHomeMetersDatabaseReference = FirebaseDatabase.getInstance()
+        mDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("homes")
+                .child(HOMES_PATH)
                 .child(homeId)
-                .child("meters");
+                .child(METERS_PATH);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -63,33 +69,25 @@ public class MetersFragment extends Fragment {
             }
         });
 
-        List<Meter> utilityList = new ArrayList();
-        mAdapter = new MeterAdapter(getContext(), utilityList);
+        List<Meter> arrayList = new ArrayList();
+        mAdapter = new MeterAdapter(getContext(), arrayList);
 
-        ListView utilityListView = rootView.findViewById(R.id.list_view);
-        utilityListView.setAdapter(mAdapter);
+        ListView listView = rootView.findViewById(R.id.list_view);
+        TextView emptyView = rootView.findViewById(R.id.empty_view);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
-        utilityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), ReadingsActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
                 intent.putExtra("meterId", view.getTag().toString());
-                startActivity(intent);
-            }
-        });
 
-        utilityListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), MeterEditorActivity.class);
-                intent.putExtra("userUid", mUserUid);
-                intent.putExtra("homeId", homeId);
-                intent.putExtra("meterId", view.getTag().toString());
                 startActivity(intent);
-
-                return false;
             }
         });
 
@@ -101,19 +99,27 @@ public class MetersFragment extends Fragment {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String meterId = dataSnapshot.getKey();
+                    String snapshotKey = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("meters")
-                            .child(meterId)
+                            .child(METERS_PATH)
+                            .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Meter meter = dataSnapshot.getValue(Meter.class);
-                                    meter.id = dataSnapshot.getKey();
+                                    Meter object = dataSnapshot.getValue(Meter.class);
 
-                                    mAdapter.add(meter);
+                                    if (object == null) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        return;
+                                    }
+
+                                    object.id = dataSnapshot.getKey();
+                                    mAdapter.add(object);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -140,14 +146,13 @@ public class MetersFragment extends Fragment {
                 }
             };
 
-            mHomeMetersDatabaseReference.addChildEventListener(mChildEventListener);
+            mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
-
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mHomeMetersDatabaseReference.removeEventListener(mChildEventListener);
+            mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }

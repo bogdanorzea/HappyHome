@@ -14,7 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Utility;
@@ -29,11 +30,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.UTILITIES_PATH;
+
 public class UtilitiesFragment extends Fragment {
     private final String mUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private UtilityAdapter mAdapter;
     private ChildEventListener mChildEventListener;
-    private DatabaseReference mHomeUtilitiesDatabaseReference;
+    private DatabaseReference mDatabaseReference;
+    private ProgressBar mProgressBar;
 
     public UtilitiesFragment() {
         // Required empty public constructor
@@ -42,18 +47,16 @@ public class UtilitiesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_utilities, container, false);
+        View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(getString(R.string.current_home_id), "");
 
-        Toast.makeText(getContext(), "The current home ID is : " + homeId, Toast.LENGTH_SHORT).show();
-
-        mHomeUtilitiesDatabaseReference = FirebaseDatabase.getInstance()
+        mDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("homes")
+                .child(HOMES_PATH)
                 .child(homeId)
-                .child("utilities");
+                .child(UTILITIES_PATH);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,34 +69,25 @@ public class UtilitiesFragment extends Fragment {
             }
         });
 
-        List<Utility> utilityList = new ArrayList();
-        mAdapter = new UtilityAdapter(getContext(), utilityList);
+        List<Utility> arrayList = new ArrayList();
+        mAdapter = new UtilityAdapter(getContext(), arrayList);
 
-        ListView utilityListView = rootView.findViewById(R.id.list_view);
-        utilityListView.setAdapter(mAdapter);
+        ListView listView = rootView.findViewById(R.id.list_view);
+        TextView emptyView = rootView.findViewById(R.id.empty_view);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
-        utilityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), BillsActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
                 intent.putExtra("utilityId", view.getTag().toString());
+
                 startActivity(intent);
-
-            }
-        });
-
-        utilityListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), UtilitiesEditorActivity.class);
-                intent.putExtra("userUid", mUserUid);
-                intent.putExtra("homeId", homeId);
-                intent.putExtra("utilityId", view.getTag().toString());
-                startActivity(intent);
-
-                return true;
             }
         });
 
@@ -105,19 +99,27 @@ public class UtilitiesFragment extends Fragment {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String utilityId = dataSnapshot.getKey();
+                    String snapshotKey = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("utilities")
-                            .child(utilityId)
+                            .child(UTILITIES_PATH)
+                            .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Utility utility = dataSnapshot.getValue(Utility.class);
-                                    utility.id = dataSnapshot.getKey();
+                                    Utility object = dataSnapshot.getValue(Utility.class);
 
-                                    mAdapter.add(utility);
+                                    if (object == null) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        return;
+                                    }
+
+                                    object.id = dataSnapshot.getKey();
+                                    mAdapter.add(object);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -144,14 +146,13 @@ public class UtilitiesFragment extends Fragment {
                 }
             };
 
-            mHomeUtilitiesDatabaseReference.addChildEventListener(mChildEventListener);
+            mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
-
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mHomeUtilitiesDatabaseReference.removeEventListener(mChildEventListener);
+            mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }

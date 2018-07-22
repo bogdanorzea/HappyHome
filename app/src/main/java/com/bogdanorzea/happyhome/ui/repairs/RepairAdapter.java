@@ -29,15 +29,12 @@ public class RepairAdapter extends ArrayAdapter<Repair> {
 
         Repair repair = getItem(position);
 
-        // Repair name
         TextView name = convertView.findViewById(R.id.text1);
         name.setText(repair.name.toString());
 
-        // Repair location
         TextView location = convertView.findViewById(R.id.text2);
         location.setText(repair.location);
 
-        // Tag the view with the Firebase ID
         convertView.setTag(repair.id);
 
         return convertView;

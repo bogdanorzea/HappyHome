@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bogdanorzea.happyhome.R;
@@ -29,39 +31,36 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.MEMBERS_PATH;
+
 public class HomesFragment extends Fragment {
 
     // Current user Firebase UID
     private final String mUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    private DatabaseReference mMemberHomesDatabaseReference;
+    private HomeAdapter mAdapter;
     private ChildEventListener mChildEventListener;
-    private HomeAdapter mHomeAdapter;
+    private DatabaseReference mDatabaseReference;
+    private ProgressBar mProgressBar;
 
     public HomesFragment() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mMemberHomesDatabaseReference = FirebaseDatabase.getInstance()
+        View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
+
+        mDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("members")
+                .child(MEMBERS_PATH)
                 .child(mUserUid)
-                .child("homes");
+                .child(HOMES_PATH);
 
-        View rootView = inflater.inflate(R.layout.fragment_homes, container, false);
-
-        FloatingActionButton addHomeButton = rootView.findViewById(R.id.fab);
-        ListView listView = rootView.findViewById(R.id.list_view);
-
-        List<Home> homes = new ArrayList();
-        mHomeAdapter = new HomeAdapter(getContext(), homes);
-        listView.setAdapter(mHomeAdapter);
-
-        addHomeButton.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), HomeEditorActivity.class);
@@ -70,6 +69,25 @@ public class HomesFragment extends Fragment {
             }
         });
 
+        List<Home> arrayList = new ArrayList();
+        mAdapter = new HomeAdapter(getContext(), arrayList);
+
+        ListView listView = rootView.findViewById(R.id.list_view);
+        TextView emptyView = rootView.findViewById(R.id.empty_view);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
+
+        listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), HomeEditorActivity.class);
+                intent.putExtra("userUid", mUserUid);
+                intent.putExtra("homeId", view.getTag().toString());
+                startActivity(intent);
+            }
+        });
 
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -87,16 +105,6 @@ public class HomesFragment extends Fragment {
             }
         });
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), HomeEditorActivity.class);
-                intent.putExtra("userUid", mUserUid);
-                intent.putExtra("homeId", view.getTag().toString());
-                startActivity(intent);
-            }
-        });
-
         return rootView;
     }
 
@@ -105,19 +113,27 @@ public class HomesFragment extends Fragment {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String homeID = dataSnapshot.getKey();
+                    String snapshotKey = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("homes")
-                            .child(homeID)
+                            .child(HOMES_PATH)
+                            .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Home home = dataSnapshot.getValue(Home.class);
-                                    home.id = dataSnapshot.getKey();
+                                    Home object = dataSnapshot.getValue(Home.class);
 
-                                    mHomeAdapter.add(home);
+                                    if (object == null) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
+                                        return;
+                                    }
+
+                                    object.id = dataSnapshot.getKey();
+                                    mAdapter.add(object);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -144,13 +160,13 @@ public class HomesFragment extends Fragment {
                 }
             };
 
-            mMemberHomesDatabaseReference.addChildEventListener(mChildEventListener);
+            mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mMemberHomesDatabaseReference.removeEventListener(mChildEventListener);
+            mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
@@ -166,7 +182,7 @@ public class HomesFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mHomeAdapter.clear();
+        mAdapter.clear();
         attachDatabaseReadListener();
     }
 }

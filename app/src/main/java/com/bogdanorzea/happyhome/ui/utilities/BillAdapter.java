@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Bill;
-import com.bogdanorzea.happyhome.data.Utility;
 
 import java.util.List;
 
@@ -24,20 +24,17 @@ public class BillAdapter extends ArrayAdapter<Bill> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = ((Activity) getContext()).getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_with_fab, parent, false);
         }
 
         Bill bill = getItem(position);
 
-        // Utility name
-        TextView name = convertView.findViewById(android.R.id.text1);
+        TextView name = convertView.findViewById(R.id.text1);
         name.setText(bill.value.toString());
 
-        // Utility location
-        TextView location = convertView.findViewById(android.R.id.text2);
+        TextView location = convertView.findViewById(R.id.text2);
         location.setText(bill.issue_date);
 
-        // Tag the view with the Firebase ID
         convertView.setTag(bill.id);
 
         return convertView;
