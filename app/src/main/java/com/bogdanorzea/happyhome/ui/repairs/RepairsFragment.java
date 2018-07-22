@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Repair;
@@ -28,11 +30,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIRS_PATH;
+
 public class RepairsFragment extends Fragment {
     private final String mUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
     private RepairAdapter mAdapter;
     private ChildEventListener mChildEventListener;
-    private DatabaseReference mHomeUtilitiesDatabaseReference;
+    private DatabaseReference mDatabaseReference;
+    private ProgressBar mProgressBar;
 
     public RepairsFragment() {
         // Required empty public constructor
@@ -41,16 +47,16 @@ public class RepairsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_repairs, container, false);
+        View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(getString(R.string.current_home_id), "");
 
-        mHomeUtilitiesDatabaseReference = FirebaseDatabase.getInstance()
+        mDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("homes")
+                .child(HOMES_PATH)
                 .child(homeId)
-                .child("repairs");
+                .child(REPAIRS_PATH);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -66,18 +72,22 @@ public class RepairsFragment extends Fragment {
         List<Repair> utilityList = new ArrayList();
         mAdapter = new RepairAdapter(getContext(), utilityList);
 
-        ListView utilityListView = rootView.findViewById(R.id.list_view);
-        utilityListView.setAdapter(mAdapter);
+        ListView listView = rootView.findViewById(R.id.list_view);
+        TextView emptyView = rootView.findViewById(R.id.empty_view);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
-        utilityListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), RepairEditorActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
                 intent.putExtra("repairId", view.getTag().toString());
-                startActivity(intent);
 
+                startActivity(intent);
             }
         });
 
@@ -90,21 +100,25 @@ public class RepairsFragment extends Fragment {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     String repairId = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("repairs")
+                            .child(REPAIRS_PATH)
                             .child(repairId)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Repair repair = dataSnapshot.getValue(Repair.class);
                                     if (repair == null) {
+                                        mProgressBar.setVisibility(View.INVISIBLE);
                                         return;
                                     }
 
                                     repair.id = dataSnapshot.getKey();
                                     mAdapter.add(repair);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -131,14 +145,14 @@ public class RepairsFragment extends Fragment {
                 }
             };
 
-            mHomeUtilitiesDatabaseReference.addChildEventListener(mChildEventListener);
+            mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mHomeUtilitiesDatabaseReference.removeEventListener(mChildEventListener);
+            mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }

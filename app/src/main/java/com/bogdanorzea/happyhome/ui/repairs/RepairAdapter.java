@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.bogdanorzea.happyhome.data.Bill;
+import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Repair;
 
 import java.util.List;
@@ -24,17 +24,17 @@ public class RepairAdapter extends ArrayAdapter<Repair> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = ((Activity) getContext()).getLayoutInflater().inflate(android.R.layout.simple_list_item_2, parent, false);
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_item, parent, false);
         }
 
         Repair repair = getItem(position);
 
         // Repair name
-        TextView name = convertView.findViewById(android.R.id.text1);
+        TextView name = convertView.findViewById(R.id.text1);
         name.setText(repair.name.toString());
 
         // Repair location
-        TextView location = convertView.findViewById(android.R.id.text2);
+        TextView location = convertView.findViewById(R.id.text2);
         location.setText(repair.location);
 
         // Tag the view with the Firebase ID

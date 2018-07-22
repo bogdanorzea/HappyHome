@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Repair;
-import com.bogdanorzea.happyhome.utils.FirebaseUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
@@ -36,6 +35,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIRS_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIR_PHOTOS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Repair.deleteRepair;
 
 public class RepairEditorActivity extends AppCompatActivity {
@@ -88,13 +90,15 @@ public class RepairEditorActivity extends AppCompatActivity {
             displayRepair();
         } else if (!TextUtils.isEmpty(mHomeId) && !TextUtils.isEmpty(mRepairId)) {
             displayRepairFromFirebase(mHomeId, mRepairId);
+        } else {
+            mRepair = new Repair();
         }
     }
 
     private void displayRepairFromFirebase(final String mHomeId, String repairId) {
         FirebaseDatabase.getInstance()
                 .getReference()
-                .child(FirebaseUtils.REPAIRS_PATH)
+                .child(REPAIRS_PATH)
                 .child(repairId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -147,18 +151,18 @@ public class RepairEditorActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(mRepairId)) {
             databaseReference = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child(FirebaseUtils.REPAIRS_PATH)
+                    .child(REPAIRS_PATH)
                     .child(mRepairId);
         } else {
             databaseReference = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child(FirebaseUtils.REPAIRS_PATH)
+                    .child(REPAIRS_PATH)
                     .push();
 
             FirebaseDatabase.getInstance().getReference()
-                    .child(FirebaseUtils.HOMES_PATH)
+                    .child(HOMES_PATH)
                     .child(mHomeId)
-                    .child(FirebaseUtils.REPAIRS_PATH)
+                    .child(REPAIRS_PATH)
                     .child(databaseReference.getKey())
                     .setValue(true);
         }
@@ -179,7 +183,7 @@ public class RepairEditorActivity extends AppCompatActivity {
 
             final StorageReference photoRef = FirebaseStorage.getInstance()
                     .getReference()
-                    .child(FirebaseUtils.REPAIR_PHOTOS_PATH)
+                    .child(REPAIR_PHOTOS_PATH)
                     .child(selectedImageUri.getLastPathSegment());
 
             photoRef.putFile(selectedImageUri)
