@@ -34,7 +34,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.utilities.BillEditorActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ui.utilities.BillsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.repairs.RepairEditorActivity"
@@ -43,6 +43,14 @@
         <activity
             android:name=".ui.meters.MeterEditorActivity"
             android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.meters.ReadingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.meters.ReadingEditorActivity"
+            android:parentActivityName=".ui.meters.ReadingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
