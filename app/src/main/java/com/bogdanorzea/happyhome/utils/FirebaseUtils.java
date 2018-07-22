@@ -17,6 +17,10 @@ import timber.log.Timber;
 
 public class FirebaseUtils {
 
+    public static final String REPAIRS_PATH = "repairs";
+    public static final String REPAIR_PHOTOS_PATH = "repair_photos";
+    public static final String HOMES_PATH = "homes";
+
     public static class Repair {
 
         public static void deleteRepair(final String repairId) {

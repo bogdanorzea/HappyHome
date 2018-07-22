@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Repair;
+import com.bogdanorzea.happyhome.utils.FirebaseUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
@@ -37,18 +39,21 @@ import com.google.firebase.storage.UploadTask;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Repair.deleteRepair;
 
 public class RepairEditorActivity extends AppCompatActivity {
+    public static final String REPAIR_KEY = "repair_object";
     private static final int RC_PHOTO_PICKER = 24;
-    private String mUserUid;
+
     private String mHomeId;
     private String mRepairId;
-    private String mRepairImageUri;
+    private Repair mRepair;
 
-    private ImageView mRepairImageView;
+    private ImageView mImageView;
     private ProgressBar mProgressBar;
-    private EditText mRepairNameEditText;
-    private EditText mRepairLocationEditText;
-    private EditText mRepairDescriptionEditText;
-    private EditText mRepairCostEditText;
+    private EditText mNameEditText;
+    private EditText mLocationEditText;
+    private EditText mDescriptionEditText;
+    private EditText mCostEditText;
+    private CheckBox mIsFixedCheckBox;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,72 +64,72 @@ public class RepairEditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mRepairNameEditText = findViewById(R.id.repair_name);
-        mRepairLocationEditText = findViewById(R.id.repair_location);
-        mRepairDescriptionEditText = findViewById(R.id.repair_description);
-        mRepairCostEditText = findViewById(R.id.repair_cost);
-        mRepairImageView = findViewById(R.id.repair_image);
+        mNameEditText = findViewById(R.id.repair_name);
+        mLocationEditText = findViewById(R.id.repair_location);
+        mDescriptionEditText = findViewById(R.id.repair_description);
+        mCostEditText = findViewById(R.id.repair_cost);
+        mImageView = findViewById(R.id.repair_image);
         mProgressBar = findViewById(R.id.progressBar);
+        mIsFixedCheckBox = findViewById(R.id.repair_is_fixed);
 
         Intent intent = getIntent();
         if (intent != null) {
-            if (intent.hasExtra("userUid") && intent.hasExtra("homeId")) {
-                mUserUid = intent.getStringExtra("userUid");
+            if (intent.hasExtra("homeId")) {
                 mHomeId = intent.getStringExtra("homeId");
             }
 
             if (intent.hasExtra("repairId")) {
                 mRepairId = intent.getStringExtra("repairId");
-
-                loadRepair(mRepairId);
             }
         }
 
-        mRepairImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-            }
-        });
+        if (savedInstanceState != null) {
+            mRepair = savedInstanceState.getParcelable(REPAIR_KEY);
+            displayRepair();
+        } else if (!TextUtils.isEmpty(mHomeId) && !TextUtils.isEmpty(mRepairId)) {
+            displayRepairFromFirebase(mHomeId, mRepairId);
+        }
     }
 
-    private void loadRepair(String repairId) {
+    private void displayRepairFromFirebase(final String mHomeId, String repairId) {
         FirebaseDatabase.getInstance()
                 .getReference()
-                .child("repairs")
+                .child(FirebaseUtils.REPAIRS_PATH)
                 .child(repairId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        Repair repair = dataSnapshot.getValue(Repair.class);
+                        mRepair = dataSnapshot.getValue(Repair.class);
+                        mRepair.home_id = mHomeId;
 
-                        mRepairNameEditText.setText(repair.name, TextView.BufferType.EDITABLE);
-                        mRepairLocationEditText.setText(repair.location, TextView.BufferType.EDITABLE);
-                        mRepairDescriptionEditText.setText(repair.description, TextView.BufferType.EDITABLE);
-                        mRepairCostEditText.setText(repair.cost.toString(), TextView.BufferType.EDITABLE);
-
-                        if (!TextUtils.isEmpty(repair.image_uri)) {
-                            Glide.with(RepairEditorActivity.this)
-                                    .load(repair.image_uri)
-                                    .into(mRepairImageView);
-                        }
+                        displayRepair();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
                     }
                 });
     }
 
-    private void saveRepair() {
-        String repairNameString = mRepairNameEditText.getText().toString();
-        String repairLocationString = mRepairLocationEditText.getText().toString();
-        String repairDescriptionString = mRepairDescriptionEditText.getText().toString();
-        String repairCostString = mRepairCostEditText.getText().toString();
+    private void displayRepair() {
+        mNameEditText.setText(mRepair.name, TextView.BufferType.EDITABLE);
+        mLocationEditText.setText(mRepair.location, TextView.BufferType.EDITABLE);
+        mDescriptionEditText.setText(mRepair.description, TextView.BufferType.EDITABLE);
+        mCostEditText.setText(mRepair.cost.toString(), TextView.BufferType.EDITABLE);
+        mIsFixedCheckBox.setChecked(mRepair.fixed);
+
+        if (!TextUtils.isEmpty(mRepair.image_uri)) {
+            Glide.with(RepairEditorActivity.this)
+                    .load(mRepair.image_uri)
+                    .into(mImageView);
+        }
+    }
+
+    private void saveCurrentRepairToFirebase() {
+        String repairNameString = mNameEditText.getText().toString();
+        String repairLocationString = mLocationEditText.getText().toString();
+        String repairDescriptionString = mDescriptionEditText.getText().toString();
+        String repairCostString = mCostEditText.getText().toString();
 
         if (TextUtils.isEmpty(repairNameString) || TextUtils.isEmpty(repairLocationString) ||
                 TextUtils.isEmpty(repairDescriptionString) || TextUtils.isEmpty(repairCostString)) {
@@ -132,34 +137,33 @@ public class RepairEditorActivity extends AppCompatActivity {
             return;
         }
 
-        Repair repair = new Repair();
-        repair.home_id = mHomeId;
-        repair.name = repairNameString;
-        repair.location = repairLocationString;
-        repair.description = repairDescriptionString;
-        repair.cost = Double.parseDouble(repairCostString);
-        repair.image_uri = mRepairImageUri;
+        mRepair.name = repairNameString;
+        mRepair.location = repairLocationString;
+        mRepair.description = repairDescriptionString;
+        mRepair.cost = Double.parseDouble(repairCostString);
+        mRepair.fixed = mIsFixedCheckBox.isChecked();
 
-        DatabaseReference repairDatabaseReference = null;
+        DatabaseReference databaseReference = null;
         if (!TextUtils.isEmpty(mRepairId)) {
-            repairDatabaseReference = FirebaseDatabase.getInstance()
+            databaseReference = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child("repairs")
+                    .child(FirebaseUtils.REPAIRS_PATH)
                     .child(mRepairId);
         } else {
-            repairDatabaseReference = FirebaseDatabase.getInstance()
+            databaseReference = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child("repairs")
+                    .child(FirebaseUtils.REPAIRS_PATH)
                     .push();
 
-            FirebaseDatabase.getInstance().getReference().child("homes")
+            FirebaseDatabase.getInstance().getReference()
+                    .child(FirebaseUtils.HOMES_PATH)
                     .child(mHomeId)
-                    .child("repairs")
-                    .child(repairDatabaseReference.getKey())
+                    .child(FirebaseUtils.REPAIRS_PATH)
+                    .child(databaseReference.getKey())
                     .setValue(true);
         }
 
-        repairDatabaseReference.setValue(repair);
+        databaseReference.setValue(mRepair);
 
         finish();
     }
@@ -169,14 +173,13 @@ public class RepairEditorActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-            mRepairImageView.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
 
             Uri selectedImageUri = data.getData();
 
             final StorageReference photoRef = FirebaseStorage.getInstance()
                     .getReference()
-                    .child("repair_photos")
+                    .child(FirebaseUtils.REPAIR_PHOTOS_PATH)
                     .child(selectedImageUri.getLastPathSegment());
 
             photoRef.putFile(selectedImageUri)
@@ -194,15 +197,14 @@ public class RepairEditorActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
                             if (task.isSuccessful()) {
-                                mRepairImageUri = task.getResult().toString();
+                                mRepair.image_uri = task.getResult().toString();
 
                                 Glide.with(RepairEditorActivity.this)
-                                        .load(mRepairImageUri)
+                                        .load(mRepair.image_uri)
                                         .apply(new RequestOptions().override(1024, 1024).centerCrop())
-                                        .into(mRepairImageView);
+                                        .into(mImageView);
 
                                 mProgressBar.setVisibility(View.GONE);
-                                mRepairImageView.setVisibility(View.VISIBLE);
                             } else {
                                 Toast.makeText(RepairEditorActivity.this, "Error uploading the image", Toast.LENGTH_SHORT).show();
                             }
@@ -219,7 +221,7 @@ public class RepairEditorActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu (Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         if (TextUtils.isEmpty(mRepairId)) {
             menu.findItem(R.id.action_delete).setVisible(false);
         }
@@ -231,7 +233,7 @@ public class RepairEditorActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save:
-                saveRepair();
+                saveCurrentRepairToFirebase();
                 return true;
             case R.id.action_add_image:
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -274,4 +276,10 @@ public class RepairEditorActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(REPAIR_KEY, mRepair);
+    }
 }
