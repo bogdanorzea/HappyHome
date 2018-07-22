@@ -8,4 +8,5 @@ public class Repair {
     public String location;
     public String image_uri;
     public Double cost;
+    public boolean done;
 }
