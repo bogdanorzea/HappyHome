@@ -55,23 +55,23 @@ public class HomesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_homes, container, false);
 
         FloatingActionButton addHomeButton = rootView.findViewById(R.id.fab);
-        ListView homesListView = rootView.findViewById(R.id.list_view);
+        ListView listView = rootView.findViewById(R.id.list_view);
 
-        List<Home> homeList = new ArrayList();
-        mHomeAdapter = new HomeAdapter(getContext(), homeList);
-        homesListView.setAdapter(mHomeAdapter);
+        List<Home> homes = new ArrayList();
+        mHomeAdapter = new HomeAdapter(getContext(), homes);
+        listView.setAdapter(mHomeAdapter);
 
         addHomeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), HomeEditorActivity.class);
-                intent.putExtra("userUID", mUserUid);
+                intent.putExtra("userUid", mUserUid);
                 startActivity(intent);
             }
         });
 
 
-        homesListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 String homeId = view.getTag().toString();
@@ -84,6 +84,16 @@ public class HomesFragment extends Fragment {
                         .apply();
 
                 return true;
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getContext(), HomeEditorActivity.class);
+                intent.putExtra("userUid", mUserUid);
+                intent.putExtra("homeId", view.getTag().toString());
+                startActivity(intent);
             }
         });
 
@@ -105,7 +115,7 @@ public class HomesFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Home home = dataSnapshot.getValue(Home.class);
-                                    home.setId(dataSnapshot.getKey());
+                                    home.id = dataSnapshot.getKey();
 
                                     mHomeAdapter.add(home);
                                 }

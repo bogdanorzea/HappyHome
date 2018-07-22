@@ -30,14 +30,14 @@ public class HomeAdapter extends ArrayAdapter<Home> {
 
         // Home name
         TextView name = convertView.findViewById(android.R.id.text1);
-        name.setText(home.getName());
+        name.setText(home.name);
 
         // Home location
         TextView location = convertView.findViewById(android.R.id.text2);
-        location.setText(home.getLocation());
+        location.setText(home.location);
 
         // Tag the view with the Firebase ID
-        convertView.setTag(home.getId());
+        convertView.setTag(home.id);
 
         return convertView;
     }
