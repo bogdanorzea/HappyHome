@@ -40,6 +40,9 @@ dependencies {
 
     // CircularImageView
     implementation 'com.mikhaellopez:circularimageview:3.1.0'
+
+    // Timber
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
