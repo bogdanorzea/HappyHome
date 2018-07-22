@@ -99,8 +99,11 @@ public class RepairsFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Repair repair = dataSnapshot.getValue(Repair.class);
-                                    repair.id = dataSnapshot.getKey();
+                                    if (repair == null) {
+                                        return;
+                                    }
 
+                                    repair.id = dataSnapshot.getKey();
                                     mAdapter.add(repair);
                                 }
 
