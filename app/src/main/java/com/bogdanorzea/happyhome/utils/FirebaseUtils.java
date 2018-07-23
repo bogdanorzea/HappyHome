@@ -98,4 +98,17 @@ public class FirebaseUtils {
         }
     }
 
+    public static class Home {
+
+        public static void deleteHome(final String homeId) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(HOMES_PATH)
+                    .child(homeId);
+
+            databaseReference.removeValue();
+        }
+
+    }
+
 }

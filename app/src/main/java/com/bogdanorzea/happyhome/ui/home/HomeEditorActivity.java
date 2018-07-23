@@ -1,13 +1,15 @@
 package com.bogdanorzea.happyhome.ui.home;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,10 +22,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Home.deleteHome;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.MEMBERS_PATH;
+
 public class HomeEditorActivity extends AppCompatActivity {
 
+    private static final String HOME_KEY = "home_key";
     private String mUserUid;
     private String mHomeId;
+    private Home mHome;
+    private EditText mHomeLocationEditText;
+    private EditText mHomeNameEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +44,8 @@ public class HomeEditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final EditText homeName = findViewById(R.id.home_name);
-        final EditText homeLocation = findViewById(R.id.home_location);
-        Button addButton = findViewById(R.id.add_button);
+        mHomeNameEditText = findViewById(R.id.home_name);
+        mHomeLocationEditText = findViewById(R.id.home_location);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -46,77 +55,149 @@ public class HomeEditorActivity extends AppCompatActivity {
 
             if (intent.hasExtra("homeId")) {
                 mHomeId = intent.getStringExtra("homeId");
-
-                addButton.setText("Update");
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child("homes")
-                        .child(mHomeId)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Home home = dataSnapshot.getValue(Home.class);
-
-                                homeName.setText(home.name, TextView.BufferType.EDITABLE);
-                                homeLocation.setText(home.location, TextView.BufferType.EDITABLE);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
             }
         }
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        if (savedInstanceState != null) {
+            mHome = savedInstanceState.getParcelable(HOME_KEY);
+            displayHome();
+        } else if (!TextUtils.isEmpty(mUserUid) && !TextUtils.isEmpty(mHomeId)) {
+            displayFromFirebase(mUserUid, mHomeId);
+        } else {
+            mHome = new Home();
+        }
+    }
+
+    private void displayFromFirebase(final String userId, String homeId) {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(HOMES_PATH)
+                .child(homeId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mHome = dataSnapshot.getValue(Home.class);
+                        mHome.user_id = userId;
+
+                        displayHome();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void displayHome() {
+        mHomeNameEditText.setText(mHome.name, TextView.BufferType.EDITABLE);
+        mHomeLocationEditText.setText(mHome.location, TextView.BufferType.EDITABLE);
+    }
+
+    private void saveCurrentHomeToFirebase() {
+        String homeNameString = mHomeNameEditText.getText().toString();
+        String homeLocationString = mHomeLocationEditText.getText().toString();
+
+        if (TextUtils.isEmpty(homeNameString) || TextUtils.isEmpty(homeLocationString)) {
+            Toast.makeText(HomeEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mHome.name = homeNameString;
+        mHome.location = homeLocationString;
+
+        DatabaseReference databaseReference = null;
+        if (!TextUtils.isEmpty(mHomeId)) {
+            databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(HOMES_PATH)
+                    .child(mHomeId);
+        } else {
+            databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(HOMES_PATH)
+                    .push();
+
+            databaseReference.child(MEMBERS_PATH)
+                    .child(mUserUid)
+                    .setValue("editor");
+
+            FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(MEMBERS_PATH)
+                    .child(mUserUid)
+                    .child(HOMES_PATH)
+                    .child(databaseReference.getKey())
+                    .setValue(true);
+        }
+
+        databaseReference.child("name").setValue(mHome.name);
+        databaseReference.child("location").setValue(mHome.location);
+
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_home_editor, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (TextUtils.isEmpty(mHomeId)) {
+            menu.findItem(R.id.action_delete).setVisible(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                saveCurrentHomeToFirebase();
+                return true;
+            case R.id.action_delete:
+                confirmDelete();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void confirmDelete() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String homeNameString = homeName.getText().toString();
-                String homeLocationString = homeLocation.getText().toString();
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        deleteHome(mHomeId);
+                        finish();
+                        break;
 
-                if (TextUtils.isEmpty(homeNameString) || TextUtils.isEmpty(homeLocationString)) {
-                    Toast.makeText(HomeEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
-                    return;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
                 }
-
-                Home home = new Home();
-                home.name = homeNameString;
-                home.location = homeLocationString;
-
-                DatabaseReference databaseReference = null;
-                if (!TextUtils.isEmpty(mHomeId)) {
-                    databaseReference = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("homes")
-                            .child(mHomeId);
-                } else {
-                    databaseReference = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("homes")
-                            .push();
-
-                    databaseReference.child("members")
-                            .child(mUserUid)
-                            .setValue("editor");
-
-                    FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("members")
-                            .child(mUserUid)
-                            .child("homes")
-                            .child(databaseReference.getKey())
-                            .setValue(true);
-                }
-
-                databaseReference.child("name")
-                        .setValue(homeNameString);
-
-                databaseReference.child("location")
-                        .setValue(homeLocationString);
-
-                finish();
             }
-        });
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete this home?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener)
+                .show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(HOME_KEY, mHome);
     }
 }

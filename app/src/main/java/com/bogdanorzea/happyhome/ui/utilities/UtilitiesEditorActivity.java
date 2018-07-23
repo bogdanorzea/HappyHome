@@ -115,11 +115,11 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
                     .setValue(true);
         }
 
-        databaseReference.child("home_id").setValue(mHomeId);
-        databaseReference.child("name").setValue(meterNameString);
-        databaseReference.child("location").setValue(meterLocationString);
-        databaseReference.child("company_name").setValue(companyNameString);
-        databaseReference.child("company_website").setValue(companyWebsiteString);
+        databaseReference.child("home_id").setValue(mUtility.home_id);
+        databaseReference.child("name").setValue(mUtility.name);
+        databaseReference.child("location").setValue(mUtility.location);
+        databaseReference.child("company_name").setValue(mUtility.company_name);
+        databaseReference.child("company_website").setValue(mUtility.company_website);
 
         finish();
     }

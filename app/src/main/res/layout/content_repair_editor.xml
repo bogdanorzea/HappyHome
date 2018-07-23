@@ -13,77 +13,53 @@
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/repair_name_input_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            style="@style/TextInputLayoutStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <EditText
                 android:id="@+id/repair_name"
-                style="@style/EditText"
+                style="@style/EditTextStyle"
                 android:hint="Repair name" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/repair_location_input_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            style="@style/TextInputLayoutStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repair_name_input_layout">
 
             <EditText
                 android:id="@+id/repair_location"
-                style="@style/EditText"
+                style="@style/EditTextStyle"
                 android:hint="Repair location" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/repair_description_input_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            style="@style/TextInputLayoutStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repair_location_input_layout">
 
             <EditText
                 android:id="@+id/repair_description"
-                style="@style/EditText.MultiLine"
+                style="@style/EditTextStyle.MultiLine"
                 android:hint="Repair description" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/repair_cost_input_layout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            style="@style/TextInputLayoutStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repair_description_input_layout">
 
             <EditText
                 android:id="@+id/repair_cost"
-                style="@style/EditText"
+                style="@style/EditTextStyle"
                 android:hint="Repair cost"
                 android:inputType="numberDecimal" />
         </android.support.design.widget.TextInputLayout>
