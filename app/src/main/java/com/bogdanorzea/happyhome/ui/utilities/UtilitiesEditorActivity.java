@@ -60,7 +60,10 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("utilityId")) {
+                setTitle("Edit utility");
                 mUtilityId = intent.getStringExtra("utilityId");
+            } else {
+                setTitle("Add utility");
             }
         }
 

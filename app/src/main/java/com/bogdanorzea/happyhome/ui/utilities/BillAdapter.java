@@ -35,7 +35,7 @@ public class BillAdapter extends ArrayAdapter<Bill> {
         TextView location = convertView.findViewById(R.id.text2);
         location.setText(bill.issue_date);
 
-        convertView.setTag(bill.id);
+        convertView.setTag(bill);
 
         return convertView;
     }

@@ -87,7 +87,8 @@ public class UtilitiesFragment extends Fragment {
                 Intent intent = new Intent(getContext(), BillsActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
-                intent.putExtra("utilityId", view.getTag().toString());
+                intent.putExtra("utilityName", ((Utility) view.getTag()).name.toString());
+                intent.putExtra("utilityId", ((Utility) view.getTag()).id.toString());
 
                 startActivity(intent);
             }

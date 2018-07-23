@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Bill;
@@ -35,6 +37,7 @@ public class BillsActivity extends AppCompatActivity {
     private ChildEventListener mChildEventListener;
     private DatabaseReference mDatabaseReference;
     private BillAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +49,14 @@ public class BillsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ListView listView = findViewById(R.id.list_view);
-        List<Bill> billList = new ArrayList();
-        mAdapter = new BillAdapter(this, billList);
+        TextView emptyView = findViewById(R.id.empty_view);
+        mProgressBar = findViewById(R.id.progressBar);
+
+        List<Bill> arrayList = new ArrayList();
+        mAdapter = new BillAdapter(this, arrayList);
+
         listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -59,6 +67,10 @@ public class BillsActivity extends AppCompatActivity {
 
             if (intent.hasExtra("utilityId")) {
                 mUtilityId = intent.getStringExtra("utilityId");
+            }
+
+            if (intent.hasExtra("utilityName")) {
+                setTitle(intent.getStringExtra("utilityName"));
             }
         }
 
@@ -87,7 +99,8 @@ public class BillsActivity extends AppCompatActivity {
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", mHomeId);
                 intent.putExtra("utilityId", mUtilityId);
-                intent.putExtra("billId", view.getTag().toString());
+                intent.putExtra("billName", ((Bill) view.getTag()).issue_date.toString());
+                intent.putExtra("billId", ((Bill) view.getTag()).id.toString());
                 startActivity(intent);
             }
         });
@@ -99,6 +112,7 @@ public class BillsActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     String snapshotKey = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
@@ -114,6 +128,8 @@ public class BillsActivity extends AppCompatActivity {
 
                                     bill.id = dataSnapshot.getKey();
                                     mAdapter.add(bill);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -186,10 +202,6 @@ public class BillsActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void confirmDelete() {
-
     }
 
     private void editCurrentUtility() {

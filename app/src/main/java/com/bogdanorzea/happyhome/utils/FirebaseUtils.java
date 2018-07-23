@@ -87,6 +87,15 @@ public class FirebaseUtils {
 
             databaseReference.removeValue();
         }
+
+        public static void deleteBill(final String billId) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(BILLS_PATH)
+                    .child(billId);
+
+            databaseReference.removeValue();
+        }
     }
 
 }

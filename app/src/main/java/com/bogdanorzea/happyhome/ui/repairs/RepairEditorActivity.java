@@ -81,7 +81,10 @@ public class RepairEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("repairId")) {
+                setTitle("Edit repair");
                 mRepairId = intent.getStringExtra("repairId");
+            } else {
+                setTitle("Add repair");
             }
         }
 
