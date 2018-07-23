@@ -87,7 +87,8 @@ public class MetersFragment extends Fragment {
                 Intent intent = new Intent(getContext(), ReadingsActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
-                intent.putExtra("meterId", view.getTag().toString());
+                intent.putExtra("meterId", ((Meter) view.getTag()).id.toString());
+                intent.putExtra("meterName", ((Meter) view.getTag()).name.toString());
 
                 startActivity(intent);
             }

@@ -25,6 +25,7 @@ public class FirebaseUtils {
     public static final String REPAIR_PHOTOS_PATH = "repair_photos";
     public static final String BILLS_PATH = "bills";
     public static final String UTILITIES_KEY = "utilities";
+    public static final String READINGS_PATH = "readings";
 
     public static class Repair {
 
@@ -109,6 +110,27 @@ public class FirebaseUtils {
             databaseReference.removeValue();
         }
 
+    }
+
+    public static class Meter {
+
+        public static void deleteMeter(final String meterId) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(METERS_PATH)
+                    .child(meterId);
+
+            databaseReference.removeValue();
+        }
+
+        public static void deleteReading(final String readingId) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(READINGS_PATH)
+                    .child(readingId);
+
+            databaseReference.removeValue();
+        }
     }
 
 }

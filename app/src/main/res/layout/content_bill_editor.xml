@@ -15,7 +15,8 @@
         <EditText
             android:id="@+id/issue_date"
             style="@style/EditTextStyle"
-            android:hint="Issue date" />
+            android:hint="Issue date"
+            android:inputType="date" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -23,7 +24,8 @@
         <EditText
             android:id="@+id/due_date"
             style="@style/EditTextStyle"
-            android:hint="Due date" />
+            android:hint="Due date"
+            android:inputType="date" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -31,6 +33,7 @@
         <EditText
             android:id="@+id/bill_value"
             style="@style/EditTextStyle"
+            android:inputType="numberDecimal"
             android:hint="Bill value" />
     </android.support.design.widget.TextInputLayout>
 

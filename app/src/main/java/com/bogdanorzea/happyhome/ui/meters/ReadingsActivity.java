@@ -7,9 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Reading;
@@ -23,6 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.READINGS_PATH;
+
 public class ReadingsActivity extends AppCompatActivity {
     private String mUserUid;
     private String mHomeId;
@@ -30,20 +37,26 @@ public class ReadingsActivity extends AppCompatActivity {
     private ChildEventListener mChildEventListener;
     private DatabaseReference mHomeUtilitiesDatabaseReference;
     private ReadingAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bills);
+        setContentView(R.layout.activity_readings);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ListView listView = findViewById(R.id.list_view);
-        List<Reading> billList = new ArrayList();
-        mAdapter = new ReadingAdapter(this, billList);
+        TextView emptyView = findViewById(R.id.empty_view);
+        mProgressBar = findViewById(R.id.progressBar);
+
+        List<Reading> arrayList = new ArrayList();
+        mAdapter = new ReadingAdapter(this, arrayList);
+
         listView.setAdapter(mAdapter);
+        listView.setEmptyView(emptyView);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -55,13 +68,17 @@ public class ReadingsActivity extends AppCompatActivity {
             if (intent.hasExtra("meterId")) {
                 mMeterId = intent.getStringExtra("meterId");
             }
+
+            if (intent.hasExtra("meterName")) {
+                setTitle(intent.getStringExtra("meterName"));
+            }
         }
 
         mHomeUtilitiesDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("meters")
+                .child(METERS_PATH)
                 .child(mMeterId)
-                .child("readings");
+                .child(READINGS_PATH);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -94,18 +111,24 @@ public class ReadingsActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     String snapshotKey = dataSnapshot.getKey();
+                    mProgressBar.setVisibility(View.VISIBLE);
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("readings")
+                            .child(READINGS_PATH)
                             .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Reading reading = dataSnapshot.getValue(Reading.class);
-                                    reading.id = dataSnapshot.getKey();
+                                    if (reading == null) {
+                                        return;
+                                    }
 
+                                    reading.id = dataSnapshot.getKey();
                                     mAdapter.add(reading);
+
+                                    mProgressBar.setVisibility(View.INVISIBLE);
                                 }
 
                                 @Override
@@ -157,5 +180,35 @@ public class ReadingsActivity extends AppCompatActivity {
 
         mAdapter.clear();
         attachDatabaseReadListener();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_readings_activity, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                editCurrentMeter();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void editCurrentMeter() {
+        Intent intent = new Intent(this, MeterEditorActivity.class);
+        intent.putExtra("userUid", mUserUid);
+        intent.putExtra("homeId", mHomeId);
+        intent.putExtra("meterId", mMeterId);
+
+        startActivity(intent);
     }
 }

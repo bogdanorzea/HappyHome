@@ -1,13 +1,15 @@
 package com.bogdanorzea.happyhome.ui.meters;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +22,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Meter.deleteReading;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.READINGS_PATH;
+
 public class ReadingEditorActivity extends AppCompatActivity {
 
+    private static final String READING_KEY = "reading_key";
     private String mUserUid;
     private String mHomeId;
     private String mMeterId;
     private String mReadingId;
+    private EditText mReadingDateEditText;
+    private EditText mReadingValueEditText;
+    private Reading mReading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +46,8 @@ public class ReadingEditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final EditText readingDate = findViewById(R.id.reading_date);
-        final EditText readingValue = findViewById(R.id.reading_value);
-        Button addButton = findViewById(R.id.add_button);
+        mReadingDateEditText = findViewById(R.id.reading_date);
+        mReadingValueEditText = findViewById(R.id.reading_value);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -50,69 +59,148 @@ public class ReadingEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("readingId")) {
+                setTitle("Edit reading");
                 mReadingId = intent.getStringExtra("readingId");
-
-                addButton.setText("Update");
-                FirebaseDatabase.getInstance()
-                        .getReference()
-                        .child("readings")
-                        .child(mReadingId)
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Reading reading = dataSnapshot.getValue(Reading.class);
-
-                                readingDate.setText(reading.date, TextView.BufferType.EDITABLE);
-                                readingValue.setText(Double.toString(reading.value), TextView.BufferType.EDITABLE);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
+            } else {
+                setTitle("Add reading");
             }
         }
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        if (savedInstanceState != null) {
+            mReading = savedInstanceState.getParcelable(READING_KEY);
+            displayReading();
+        } else if (!TextUtils.isEmpty(mMeterId) && !TextUtils.isEmpty(mReadingId)) {
+            displayReadingFromFirebase(mMeterId, mReadingId);
+        } else {
+            mReading = new Reading();
+        }
+    }
+
+    private void saveCurrentReadingToFirebase() {
+        String readingDateString = mReadingDateEditText.getText().toString();
+        String readingValueString = mReadingValueEditText.getText().toString();
+
+        if (TextUtils.isEmpty(readingDateString) || TextUtils.isEmpty(readingValueString)) {
+            Toast.makeText(ReadingEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        mReading.meter_id = mMeterId;
+        mReading.value = Double.parseDouble(readingValueString);
+        mReading.date = readingDateString;
+
+        DatabaseReference readingDatabaseReference = null;
+        if (!TextUtils.isEmpty(mReadingId)) {
+            readingDatabaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(READINGS_PATH)
+                    .child(mReadingId);
+        } else {
+            readingDatabaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(READINGS_PATH)
+                    .push();
+
+            FirebaseDatabase.getInstance().getReference()
+                    .child(METERS_PATH)
+                    .child(mMeterId)
+                    .child(READINGS_PATH)
+                    .child(readingDatabaseReference.getKey())
+                    .setValue(true);
+        }
+
+        readingDatabaseReference.setValue(mReading);
+
+        finish();
+    }
+
+    private void displayReadingFromFirebase(String meterId, final String readerId) {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(READINGS_PATH)
+                .child(meterId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        mReading = dataSnapshot.getValue(Reading.class);
+                        mReading.meter_id = readerId;
+
+                        displayReading();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void displayReading() {
+        mReadingDateEditText.setText(mReading.date, TextView.BufferType.EDITABLE);
+        mReadingValueEditText.setText(Double.toString(mReading.value), TextView.BufferType.EDITABLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_reading_editor, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (TextUtils.isEmpty(mReadingId)) {
+            menu.findItem(R.id.action_delete).setVisible(false);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save:
+                saveCurrentReadingToFirebase();
+                return true;
+            case R.id.action_delete:
+                confirmDelete();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void confirmDelete() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String readingDateString = readingDate.getText().toString();
-                String readingValueString = readingValue.getText().toString();
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
+                        deleteReading(mReadingId);
+                        finish();
+                        break;
 
-                if (TextUtils.isEmpty(readingDateString) || TextUtils.isEmpty(readingValueString)) {
-                    Toast.makeText(ReadingEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
-                    return;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        dialog.dismiss();
+                        break;
                 }
-
-                Reading reading = new Reading();
-                reading.meter_id = mMeterId;
-                reading.value = Double.parseDouble(readingValueString);
-                reading.date = readingDateString;
-
-                DatabaseReference readingDatabaseReference = null;
-                if (!TextUtils.isEmpty(mReadingId)) {
-                    readingDatabaseReference = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("readings")
-                            .child(mReadingId);
-                } else {
-                    readingDatabaseReference = FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child("readings")
-                            .push();
-
-                    FirebaseDatabase.getInstance().getReference().child("meters")
-                            .child(mMeterId)
-                            .child("readings")
-                            .child(readingDatabaseReference.getKey())
-                            .setValue(true);
-                }
-
-                readingDatabaseReference.setValue(reading);
-
-                finish();
             }
-        });
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete this bill?")
+                .setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener)
+                .show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(READING_KEY, mReading);
     }
 }

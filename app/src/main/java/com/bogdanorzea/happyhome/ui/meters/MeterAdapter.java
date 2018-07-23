@@ -35,7 +35,7 @@ public class MeterAdapter extends ArrayAdapter<Meter> {
         TextView location = convertView.findViewById(R.id.text2);
         location.setText(meter.location);
 
-        convertView.setTag(meter.id);
+        convertView.setTag(meter);
 
         return convertView;
     }
