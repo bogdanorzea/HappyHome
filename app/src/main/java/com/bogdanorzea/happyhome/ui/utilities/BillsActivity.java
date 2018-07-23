@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -23,12 +25,15 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.BILLS_PATH;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.UTILITIES_KEY;
+
 public class BillsActivity extends AppCompatActivity {
     private String mUserUid;
     private String mHomeId;
     private String mUtilityId;
     private ChildEventListener mChildEventListener;
-    private DatabaseReference mHomeUtilitiesDatabaseReference;
+    private DatabaseReference mDatabaseReference;
     private BillAdapter mAdapter;
 
     @Override
@@ -57,11 +62,11 @@ public class BillsActivity extends AppCompatActivity {
             }
         }
 
-        mHomeUtilitiesDatabaseReference = FirebaseDatabase.getInstance()
+        mDatabaseReference = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("utilities")
+                .child(UTILITIES_KEY)
                 .child(mUtilityId)
-                .child("bills");
+                .child(BILLS_PATH);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,12 +83,6 @@ public class BillsActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(getContext(), UtilitiesEditorActivity.class);
-//                intent.putExtra("userUid", mUserUid);
-//                intent.putExtra("homeId", homeId);
-//                intent.putExtra("utilityId", view.getTag().toString());
-//                startActivity(intent);
-
                 Intent intent = new Intent(BillsActivity.this, BillEditorActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", mHomeId);
@@ -99,18 +98,21 @@ public class BillsActivity extends AppCompatActivity {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String billId = dataSnapshot.getKey();
+                    String snapshotKey = dataSnapshot.getKey();
 
                     FirebaseDatabase.getInstance()
                             .getReference()
-                            .child("bills")
-                            .child(billId)
+                            .child(BILLS_PATH)
+                            .child(snapshotKey)
                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Bill bill = dataSnapshot.getValue(Bill.class);
-                                    bill.id = dataSnapshot.getKey();
+                                    if (bill == null) {
+                                        return;
+                                    }
 
+                                    bill.id = dataSnapshot.getKey();
                                     mAdapter.add(bill);
                                 }
 
@@ -138,14 +140,14 @@ public class BillsActivity extends AppCompatActivity {
                 }
             };
 
-            mHomeUtilitiesDatabaseReference.addChildEventListener(mChildEventListener);
+            mDatabaseReference.addChildEventListener(mChildEventListener);
         }
     }
 
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mHomeUtilitiesDatabaseReference.removeEventListener(mChildEventListener);
+            mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
     }
@@ -163,5 +165,39 @@ public class BillsActivity extends AppCompatActivity {
 
         mAdapter.clear();
         attachDatabaseReadListener();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_bills_activity, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                editCurrentUtility();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void confirmDelete() {
+
+    }
+
+    private void editCurrentUtility() {
+        Intent intent = new Intent(this, UtilitiesEditorActivity.class);
+        intent.putExtra("userUid", mUserUid);
+        intent.putExtra("homeId", mHomeId);
+        intent.putExtra("utilityId", mUtilityId);
+
+        startActivity(intent);
     }
 }

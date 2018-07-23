@@ -47,6 +47,8 @@ public class UtilitiesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle("Utilities");
+
         View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);

@@ -23,13 +23,15 @@ public class FirebaseUtils {
     public static final String METERS_PATH = "meters";
     public static final String REPAIRS_PATH = "repairs";
     public static final String REPAIR_PHOTOS_PATH = "repair_photos";
+    public static final String BILLS_PATH = "bills";
+    public static final String UTILITIES_KEY = "utilities";
 
     public static class Repair {
 
         public static void deleteRepair(final String repairId) {
             final DatabaseReference repairReference = FirebaseDatabase.getInstance()
                     .getReference()
-                    .child("repairs")
+                    .child(REPAIRS_PATH)
                     .child(repairId);
 
             repairReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -72,6 +74,18 @@ public class FirebaseUtils {
                 }
             });
 
+        }
+    }
+
+    public static class Utility {
+
+        public static void deleteUtility(final String utilityId) {
+            final DatabaseReference databaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(UTILITIES_PATH)
+                    .child(utilityId);
+
+            databaseReference.removeValue();
         }
     }
 

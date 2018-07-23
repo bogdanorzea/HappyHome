@@ -219,7 +219,7 @@ public class RepairEditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_repair_editor, menu);
+        getMenuInflater().inflate(R.menu.menu_repair_editor, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

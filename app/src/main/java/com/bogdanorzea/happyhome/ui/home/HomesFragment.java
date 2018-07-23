@@ -51,6 +51,8 @@ public class HomesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        getActivity().setTitle("Homes");
+
         View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
         mDatabaseReference = FirebaseDatabase.getInstance()
