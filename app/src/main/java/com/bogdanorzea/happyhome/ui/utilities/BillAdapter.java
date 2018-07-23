@@ -24,7 +24,7 @@ public class BillAdapter extends ArrayAdapter<Bill> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
-            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_with_fab, parent, false);
+            convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_item, parent, false);
         }
 
         Bill bill = getItem(position);
