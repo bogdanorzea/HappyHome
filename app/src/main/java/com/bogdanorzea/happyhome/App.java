@@ -15,8 +15,5 @@ public class App extends Application {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
-
-        // Enable Firebase persistence
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 }
