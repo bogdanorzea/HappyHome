@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import timber.log.Timber;
+
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Meter.deleteReading;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.READINGS_PATH;
@@ -114,18 +116,20 @@ public class ReadingEditorActivity extends AppCompatActivity {
         finish();
     }
 
-    private void displayReadingFromFirebase(String meterId, final String readerId) {
+    private void displayReadingFromFirebase(String meterId, final String readingId) {
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(READINGS_PATH)
-                .child(meterId)
+                .child(readingId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mReading = dataSnapshot.getValue(Reading.class);
-                        mReading.meter_id = readerId;
-
-                        displayReading();
+                        if (mReading != null) {
+                            displayReading();
+                        } else {
+                            Timber.d("Error retrieving reading with id %s", readingId);
+                        }
                     }
 
                     @Override

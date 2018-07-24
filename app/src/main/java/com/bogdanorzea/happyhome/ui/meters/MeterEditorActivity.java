@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import timber.log.Timber;
+
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Meter.deleteMeter;
@@ -73,7 +75,7 @@ public class MeterEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void displayMeterFromFirebase(final String homeId, String meterId) {
+    private void displayMeterFromFirebase(final String homeId, final String meterId) {
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(METERS_PATH)
@@ -82,9 +84,11 @@ public class MeterEditorActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mMeter = dataSnapshot.getValue(Meter.class);
-                        mMeter.home_id = homeId;
-
-                        displayMeter();
+                        if (mMeter == null) {
+                            displayMeter();
+                        } else {
+                            Timber.d("Error retrieving utility with id %s", meterId);
+                        }
                     }
 
                     @Override

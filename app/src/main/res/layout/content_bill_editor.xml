@@ -14,7 +14,7 @@
 
         <EditText
             android:id="@+id/issue_date"
-            style="@style/EditTextStyle"
+            style="@style/EditTextStyle.DatePicker"
             android:hint="Issue date"
             android:inputType="date" />
     </android.support.design.widget.TextInputLayout>
@@ -23,7 +23,7 @@
 
         <EditText
             android:id="@+id/due_date"
-            style="@style/EditTextStyle"
+            style="@style/EditTextStyle.DatePicker"
             android:hint="Due date"
             android:inputType="date" />
     </android.support.design.widget.TextInputLayout>

@@ -1,5 +1,6 @@
 package com.bogdanorzea.happyhome.ui.utilities;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +25,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+import timber.log.Timber;
+
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.BILLS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.UTILITIES_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Utility.deleteBill;
+import static com.bogdanorzea.happyhome.utils.StringUtils.DATA_FORMAT_USER;
+import static com.bogdanorzea.happyhome.utils.StringUtils.getIsoFormatFromDateString;
+import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
 public class BillEditorActivity extends AppCompatActivity {
 
-    private static final String BILL_KEY = "bill_object";
+    private static final String BILL_KEY = "bill_key";
     private String mUserUid;
     private String mHomeId;
     private String mUtilityId;
@@ -75,9 +87,62 @@ public class BillEditorActivity extends AppCompatActivity {
         } else {
             mBill = new Bill();
         }
+
+        setDatePickers();
     }
 
-    private void displayBillFromFirebase(final String utilityId, String billId) {
+    private void setDatePickers() {
+        final Calendar issueCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener issueDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                issueCalendar.set(Calendar.YEAR, year);
+                issueCalendar.set(Calendar.MONTH, monthOfYear);
+                issueCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATA_FORMAT_USER, Locale.US);
+                mIssueDateEditText.setText(sdf.format(issueCalendar.getTime()));
+            }
+        };
+
+        mIssueDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(BillEditorActivity.this,
+                        issueDateSetListener,
+                        issueCalendar.get(Calendar.YEAR),
+                        issueCalendar.get(Calendar.MONTH),
+                        issueCalendar.get(Calendar.DAY_OF_MONTH)
+                ).show();
+            }
+        });
+
+        final Calendar dueCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener dueDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                dueCalendar.set(Calendar.YEAR, year);
+                dueCalendar.set(Calendar.MONTH, monthOfYear);
+                dueCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATA_FORMAT_USER, Locale.US);
+                mDueDateEditText.setText(sdf.format(dueCalendar.getTime()));
+            }
+        };
+
+        mDueDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(BillEditorActivity.this,
+                        dueDateSetListener,
+                        dueCalendar.get(Calendar.YEAR),
+                        dueCalendar.get(Calendar.MONTH),
+                        dueCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void displayBillFromFirebase(final String utilityId, final String billId) {
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(BILLS_PATH)
@@ -86,9 +151,11 @@ public class BillEditorActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mBill = dataSnapshot.getValue(Bill.class);
-                        mBill.utility_id = utilityId;
-
-                        displayBill();
+                        if (mBill != null) {
+                            displayBill();
+                        } else {
+                            Timber.d("Error retrieving bill with id %s", billId);
+                        }
                     }
 
                     @Override
@@ -99,14 +166,14 @@ public class BillEditorActivity extends AppCompatActivity {
     }
 
     private void displayBill() {
+        mIssueDateEditText.setText(getReadableFormatFromDateString(mBill.issue_date), TextView.BufferType.EDITABLE);
+        mDueDateEditText.setText(getReadableFormatFromDateString(mBill.due_date), TextView.BufferType.EDITABLE);
         mBillValueEditText.setText(mBill.value.toString(), TextView.BufferType.EDITABLE);
-        mIssueDateEditText.setText(mBill.issue_date, TextView.BufferType.EDITABLE);
-        mDueDateEditText.setText(mBill.due_date, TextView.BufferType.EDITABLE);
     }
 
     private void saveCurrentBillToFirebase() {
-        String issueDateString = mIssueDateEditText.getText().toString();
-        String dueDateString = mDueDateEditText.getText().toString();
+        String issueDateString = getIsoFormatFromDateString(mIssueDateEditText.getText().toString());
+        String dueDateString = getIsoFormatFromDateString(mDueDateEditText.getText().toString());
         String billValueString = mBillValueEditText.getText().toString();
 
         if (TextUtils.isEmpty(issueDateString) || TextUtils.isEmpty(dueDateString) ||
@@ -205,6 +272,10 @@ public class BillEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mBill.due_date = getIsoFormatFromDateString(mDueDateEditText.getText().toString());
+        mBill.issue_date = getIsoFormatFromDateString(mIssueDateEditText.getText().toString());
+        mBill.value = Double.parseDouble(mBillValueEditText.getText().toString());
 
         outState.putParcelable(BILL_KEY, mBill);
     }

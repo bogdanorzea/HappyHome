@@ -14,6 +14,8 @@ import com.bogdanorzea.happyhome.data.Bill;
 
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
+
 public class BillAdapter extends ArrayAdapter<Bill> {
 
     public BillAdapter(@NonNull Context context, List<Bill> objects) {
@@ -33,7 +35,7 @@ public class BillAdapter extends ArrayAdapter<Bill> {
         name.setText(bill.value.toString());
 
         TextView location = convertView.findViewById(R.id.text2);
-        location.setText(bill.issue_date);
+        location.setText(getReadableFormatFromDateString(bill.issue_date));
 
         convertView.setTag(bill);
 

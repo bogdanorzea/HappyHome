@@ -35,6 +35,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import timber.log.Timber;
+
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIRS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIR_PHOTOS_PATH;
@@ -98,7 +100,7 @@ public class RepairEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void displayRepairFromFirebase(final String mHomeId, String repairId) {
+    private void displayRepairFromFirebase(final String mHomeId, final String repairId) {
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(REPAIRS_PATH)
@@ -107,9 +109,11 @@ public class RepairEditorActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mRepair = dataSnapshot.getValue(Repair.class);
-                        mRepair.home_id = mHomeId;
-
-                        displayRepair();
+                        if (mRepair != null) {
+                            displayRepair();
+                        } else {
+                            Timber.d("Error retrieving repair with id %s", repairId);
+                        }
                     }
 
                     @Override

@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import timber.log.Timber;
+
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Home.deleteHome;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.MEMBERS_PATH;
@@ -68,7 +70,7 @@ public class HomeEditorActivity extends AppCompatActivity {
         }
     }
 
-    private void displayFromFirebase(final String userId, String homeId) {
+    private void displayFromFirebase(final String userId, final String homeId) {
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child(HOMES_PATH)
@@ -77,9 +79,11 @@ public class HomeEditorActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mHome = dataSnapshot.getValue(Home.class);
-                        mHome.user_id = userId;
-
-                        displayHome();
+                        if (mHome != null) {
+                            displayHome();
+                        } else {
+                            Timber.d("Error retrieving utility with id %s", homeId);
+                        }
                     }
 
                     @Override
