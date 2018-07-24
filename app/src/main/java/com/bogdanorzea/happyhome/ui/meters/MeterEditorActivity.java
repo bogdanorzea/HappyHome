@@ -84,7 +84,7 @@ public class MeterEditorActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mMeter = dataSnapshot.getValue(Meter.class);
-                        if (mMeter == null) {
+                        if (mMeter != null) {
                             displayMeter();
                         } else {
                             Timber.d("Error retrieving utility with id %s", meterId);
