@@ -1,5 +1,6 @@
 package com.bogdanorzea.happyhome.ui.meters;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,11 +25,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import timber.log.Timber;
 
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.METERS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Meter.deleteReading;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.READINGS_PATH;
+import static com.bogdanorzea.happyhome.utils.StringUtils.DATA_FORMAT_USER;
+import static com.bogdanorzea.happyhome.utils.StringUtils.getIsoFormatFromDateString;
+import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
 public class ReadingEditorActivity extends AppCompatActivity {
 
@@ -76,10 +86,39 @@ public class ReadingEditorActivity extends AppCompatActivity {
         } else {
             mReading = new Reading();
         }
+
+        setDatePickers();
+    }
+
+    private void setDatePickers() {
+        final Calendar readingDateCalendar = Calendar.getInstance();
+        final DatePickerDialog.OnDateSetListener issueDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                readingDateCalendar.set(Calendar.YEAR, year);
+                readingDateCalendar.set(Calendar.MONTH, monthOfYear);
+                readingDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATA_FORMAT_USER, Locale.US);
+                mReadingDateEditText.setText(sdf.format(readingDateCalendar.getTime()));
+            }
+        };
+
+        mReadingDateEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(ReadingEditorActivity.this,
+                        issueDateSetListener,
+                        readingDateCalendar.get(Calendar.YEAR),
+                        readingDateCalendar.get(Calendar.MONTH),
+                        readingDateCalendar.get(Calendar.DAY_OF_MONTH)
+                ).show();
+            }
+        });
     }
 
     private void saveCurrentReadingToFirebase() {
-        String readingDateString = mReadingDateEditText.getText().toString();
+        String readingDateString = getIsoFormatFromDateString(mReadingDateEditText.getText().toString());
         String readingValueString = mReadingValueEditText.getText().toString();
 
         if (TextUtils.isEmpty(readingDateString) || TextUtils.isEmpty(readingValueString)) {
@@ -140,7 +179,7 @@ public class ReadingEditorActivity extends AppCompatActivity {
     }
 
     private void displayReading() {
-        mReadingDateEditText.setText(mReading.date, TextView.BufferType.EDITABLE);
+        mReadingDateEditText.setText(getReadableFormatFromDateString(mReading.date), TextView.BufferType.EDITABLE);
         mReadingValueEditText.setText(Double.toString(mReading.value), TextView.BufferType.EDITABLE);
     }
 
@@ -204,6 +243,9 @@ public class ReadingEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mReading.date = getIsoFormatFromDateString(mReadingDateEditText.getText().toString());
+        mReading.value = Double.parseDouble(mReadingValueEditText.getText().toString());
 
         outState.putParcelable(READING_KEY, mReading);
     }

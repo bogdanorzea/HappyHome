@@ -37,6 +37,10 @@
         <item name="android:editable">false</item>
     </style>
 
+    <style name="EditTextStyle.Decimal" parent="EditTextStyle">
+        <item name="android:inputType">numberDecimal</item>
+    </style>
+
     <style name="TextInputLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>

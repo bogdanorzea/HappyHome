@@ -29,15 +29,15 @@ public class BillAdapter extends ArrayAdapter<Bill> {
             convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.listview_item, parent, false);
         }
 
-        Bill bill = getItem(position);
+        Bill item = getItem(position);
 
         TextView name = convertView.findViewById(R.id.text1);
-        name.setText(bill.value.toString());
+        name.setText(item.value.toString());
 
         TextView location = convertView.findViewById(R.id.text2);
-        location.setText(getReadableFormatFromDateString(bill.issue_date));
+        location.setText(getReadableFormatFromDateString(item.issue_date));
 
-        convertView.setTag(bill);
+        convertView.setTag(item);
 
         return convertView;
     }

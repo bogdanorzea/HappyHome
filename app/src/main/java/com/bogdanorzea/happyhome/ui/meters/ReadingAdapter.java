@@ -14,6 +14,8 @@ import com.bogdanorzea.happyhome.data.Reading;
 
 import java.util.List;
 
+import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
+
 public class ReadingAdapter extends ArrayAdapter<Reading> {
 
     public ReadingAdapter(@NonNull Context context, List<Reading> objects) {
@@ -30,10 +32,10 @@ public class ReadingAdapter extends ArrayAdapter<Reading> {
         Reading item = getItem(position);
 
         TextView date = convertView.findViewById(R.id.text1);
-        date.setText(item.date);
+        date.setText(item.value.toString());
 
         TextView value = convertView.findViewById(R.id.text2);
-        value.setText(Double.toString(item.value));
+        value.setText(getReadableFormatFromDateString(item.date));
 
         convertView.setTag(item.id);
 

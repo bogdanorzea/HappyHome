@@ -18,7 +18,7 @@ public class Reading implements Parcelable {
     public String id;
     public String meter_id;
     public String date;
-    public double value;
+    public Double value;
 
     public Reading() {
 
