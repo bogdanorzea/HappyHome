@@ -59,22 +59,14 @@
 
             <EditText
                 android:id="@+id/repair_cost"
-                style="@style/EditTextStyle"
-                android:hint="Repair cost"
-                android:inputType="numberDecimal" />
+                style="@style/EditTextStyle.Decimal"
+                android:hint="Repair cost" />
         </android.support.design.widget.TextInputLayout>
 
         <CheckBox
-            android:id="@+id/repair_is_fixed"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:id="@+id/repair_fixed"
+            style="@style/CheckBoxStyle"
             android:text="Fixed"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repair_cost_input_layout" />
@@ -95,7 +87,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/repair_is_fixed"
+            app:layout_constraintTop_toBottomOf="@+id/repair_fixed"
             tools:src="@drawable/happy_home_logo" />
 
         <ProgressBar

@@ -204,6 +204,10 @@ public class MeterEditorActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        mMeter.home_id = mHomeId;
+        mMeter.name = mMeterNameEditText.getText().toString();
+        mMeter.location = mMeterLocationEditText.getText().toString();
+
         outState.putParcelable(METER_KEY, mMeter);
     }
 

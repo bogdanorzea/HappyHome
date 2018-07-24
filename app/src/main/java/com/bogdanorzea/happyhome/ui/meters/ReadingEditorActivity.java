@@ -244,6 +244,7 @@ public class ReadingEditorActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        mReading.meter_id = mMeterId;
         mReading.date = getIsoFormatFromDateString(mReadingDateEditText.getText().toString());
         mReading.value = Double.parseDouble(mReadingValueEditText.getText().toString());
 

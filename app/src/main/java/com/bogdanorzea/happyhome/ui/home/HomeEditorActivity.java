@@ -107,6 +107,7 @@ public class HomeEditorActivity extends AppCompatActivity {
             return;
         }
 
+        mHome.user_id = mUserUid;
         mHome.name = homeNameString;
         mHome.location = homeLocationString;
 
@@ -201,6 +202,10 @@ public class HomeEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mHome.user_id = mUserUid;
+        mHome.name = mHomeNameEditText.getText().toString();
+        mHome.location = mHomeLocationEditText.getText().toString();
 
         outState.putParcelable(HOME_KEY, mHome);
     }

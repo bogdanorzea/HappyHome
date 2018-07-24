@@ -74,7 +74,7 @@ public class RepairEditorActivity extends AppCompatActivity {
         mCostEditText = findViewById(R.id.repair_cost);
         mImageView = findViewById(R.id.repair_image);
         mProgressBar = findViewById(R.id.progressBar);
-        mIsFixedCheckBox = findViewById(R.id.repair_is_fixed);
+        mIsFixedCheckBox = findViewById(R.id.repair_fixed);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -148,6 +148,7 @@ public class RepairEditorActivity extends AppCompatActivity {
             return;
         }
 
+        mRepair.home_id = mHomeId;
         mRepair.name = repairNameString;
         mRepair.location = repairLocationString;
         mRepair.description = repairDescriptionString;
@@ -290,6 +291,13 @@ public class RepairEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mRepair.home_id = mHomeId;
+        mRepair.name = mNameEditText.getText().toString();
+        mRepair.location = mLocationEditText.getText().toString();
+        mRepair.description = mDescriptionEditText.getText().toString();
+        mRepair.cost = Double.parseDouble(mCostEditText.getText().toString());
+        mRepair.fixed = mIsFixedCheckBox.isChecked();
 
         outState.putParcelable(REPAIR_KEY, mRepair);
     }

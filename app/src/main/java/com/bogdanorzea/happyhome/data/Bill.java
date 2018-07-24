@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Bill implements Parcelable {
+
     public static final Creator<Bill> CREATOR = new Creator<Bill>() {
         @Override
         public Bill createFromParcel(Parcel in) {
@@ -20,6 +21,7 @@ public class Bill implements Parcelable {
     public String issue_date;
     public String due_date;
     public Double value;
+    public boolean paid;
 
     public Bill() {
 
@@ -35,6 +37,7 @@ public class Bill implements Parcelable {
         } else {
             value = in.readDouble();
         }
+        paid = in.readByte() != 0;
     }
 
     @Override
@@ -54,5 +57,6 @@ public class Bill implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeDouble(value);
         }
+        dest.writeByte((byte) (paid ? 1 : 0));
     }
 }

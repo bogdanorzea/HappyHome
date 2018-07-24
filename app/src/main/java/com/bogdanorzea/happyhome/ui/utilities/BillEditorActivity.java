@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -49,6 +50,8 @@ public class BillEditorActivity extends AppCompatActivity {
     private EditText mIssueDateEditText;
     private EditText mDueDateEditText;
     private EditText mBillValueEditText;
+    private CheckBox mIsPayedCheckBox;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class BillEditorActivity extends AppCompatActivity {
         mIssueDateEditText = findViewById(R.id.issue_date);
         mDueDateEditText = findViewById(R.id.due_date);
         mBillValueEditText = findViewById(R.id.bill_value);
+        mIsPayedCheckBox = findViewById(R.id.bill_paid);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -169,6 +173,7 @@ public class BillEditorActivity extends AppCompatActivity {
         mIssueDateEditText.setText(getReadableFormatFromDateString(mBill.issue_date), TextView.BufferType.EDITABLE);
         mDueDateEditText.setText(getReadableFormatFromDateString(mBill.due_date), TextView.BufferType.EDITABLE);
         mBillValueEditText.setText(mBill.value.toString(), TextView.BufferType.EDITABLE);
+        mIsPayedCheckBox.setChecked(mBill.paid);
     }
 
     private void saveCurrentBillToFirebase() {
@@ -186,6 +191,7 @@ public class BillEditorActivity extends AppCompatActivity {
         mBill.value = Double.parseDouble(billValueString);
         mBill.issue_date = issueDateString;
         mBill.due_date = dueDateString;
+        mBill.paid = mIsPayedCheckBox.isChecked();
 
         DatabaseReference billReference = null;
         if (!TextUtils.isEmpty(mBillId)) {
@@ -273,9 +279,11 @@ public class BillEditorActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        mBill.utility_id = mUtilityId;
         mBill.due_date = getIsoFormatFromDateString(mDueDateEditText.getText().toString());
         mBill.issue_date = getIsoFormatFromDateString(mIssueDateEditText.getText().toString());
         mBill.value = Double.parseDouble(mBillValueEditText.getText().toString());
+        mBill.paid = mIsPayedCheckBox.isChecked();
 
         outState.putParcelable(BILL_KEY, mBill);
     }
