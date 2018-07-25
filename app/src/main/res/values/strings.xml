@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
 
     <!--Shared preference keys-->
+    <string name="preferences_name">home_preferences</string>
     <string name="current_home_id">current_home_uid</string>
 </resources>

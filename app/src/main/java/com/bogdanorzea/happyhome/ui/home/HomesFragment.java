@@ -94,22 +94,6 @@ public class HomesFragment extends Fragment {
             }
         });
 
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String homeId = view.getTag().toString();
-
-                Toast.makeText(getContext(), "You clicked on home with id: " + homeId, Toast.LENGTH_SHORT).show();
-
-                SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                sharedPref.edit()
-                        .putString(getString(R.string.current_home_id), homeId)
-                        .apply();
-
-                return true;
-            }
-        });
-
         initializeAdMobView(rootView);
 
         return rootView;

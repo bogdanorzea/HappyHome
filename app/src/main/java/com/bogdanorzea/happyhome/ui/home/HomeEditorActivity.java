@@ -1,7 +1,9 @@
 package com.bogdanorzea.happyhome.ui.home;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -62,6 +64,9 @@ public class HomeEditorActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mHome = savedInstanceState.getParcelable(HOME_KEY);
+            if (mHomeId != null) {
+                mHome.id = mHomeId;
+            }
             displayHome();
         } else if (!TextUtils.isEmpty(mUserUid) && !TextUtils.isEmpty(mHomeId)) {
             displayFromFirebase(mUserUid, mHomeId);
@@ -80,6 +85,8 @@ public class HomeEditorActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         mHome = dataSnapshot.getValue(Home.class);
                         if (mHome != null) {
+                            mHome.id = homeId;
+
                             displayHome();
                         } else {
                             Timber.d("Error retrieving utility with id %s", homeId);
@@ -152,10 +159,24 @@ public class HomeEditorActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (TextUtils.isEmpty(mHomeId)) {
+            menu.findItem(R.id.action_set_current).setVisible(false);
             menu.findItem(R.id.action_delete).setVisible(false);
+        } else {
+            setCurrentMenuIcon(menu.findItem(R.id.action_set_current));
         }
 
         return true;
+    }
+
+    private void setCurrentMenuIcon(MenuItem menuItem) {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);
+        String currentHomeId = sharedPref.getString(getString(R.string.current_home_id), "");
+
+        if (currentHomeId.equals(mHomeId)) {
+            menuItem.setIcon(R.drawable.round_star_white_24);
+        } else {
+            menuItem.setIcon(R.drawable.round_star_border_white_24);
+        }
     }
 
     @Override
@@ -163,6 +184,10 @@ public class HomeEditorActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_save:
                 saveCurrentHomeToFirebase();
+                return true;
+            case R.id.action_set_current:
+                saveHomeCurrent();
+                setCurrentMenuIcon(item);
                 return true;
             case R.id.action_delete:
                 confirmDelete();
@@ -173,6 +198,13 @@ public class HomeEditorActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void saveHomeCurrent() {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);
+        sharedPref.edit()
+                .putString(getString(R.string.current_home_id), mHome.id)
+                .apply();
     }
 
     private void confirmDelete() {

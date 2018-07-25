@@ -54,7 +54,8 @@ public class UtilitiesFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = getActivity()
+                .getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(getString(R.string.current_home_id), "");
 
         mDatabaseReference = FirebaseDatabase.getInstance()
