@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Reading;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -103,6 +106,16 @@ public class ReadingsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        initializeAdMobView();
+    }
+
+    private void initializeAdMobView() {
+        MobileAds.initialize(this, "ca-app-pub-3940256099942544/6300978111");
+
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void attachDatabaseReadListener() {

@@ -19,6 +19,9 @@ import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Utility;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -94,7 +97,17 @@ public class UtilitiesFragment extends Fragment {
             }
         });
 
+        initializeAdMobView(rootView);
+
         return rootView;
+    }
+
+    private void initializeAdMobView(View rootView) {
+        MobileAds.initialize(getContext(), "ca-app-pub-3940256099942544/6300978111");
+
+        AdView mAdView = rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void attachDatabaseReadListener() {

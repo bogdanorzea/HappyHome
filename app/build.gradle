@@ -52,6 +52,9 @@ dependencies {
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // AdMob
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
