@@ -21,7 +21,7 @@
             <EditText
                 android:id="@+id/repair_name"
                 style="@style/EditTextStyle"
-                android:hint="Repair name" />
+                android:hint="@string/edit_repair_name" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -34,7 +34,7 @@
             <EditText
                 android:id="@+id/repair_location"
                 style="@style/EditTextStyle"
-                android:hint="Repair location" />
+                android:hint="@string/edit_repair_location" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -47,7 +47,7 @@
             <EditText
                 android:id="@+id/repair_description"
                 style="@style/EditTextStyle.MultiLine"
-                android:hint="Repair description" />
+                android:hint="@string/edit_repair_description" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -60,13 +60,13 @@
             <EditText
                 android:id="@+id/repair_cost"
                 style="@style/EditTextStyle.Decimal"
-                android:hint="Repair cost" />
+                android:hint="@string/edit_repair_cost" />
         </android.support.design.widget.TextInputLayout>
 
         <CheckBox
             android:id="@+id/repair_fixed"
             style="@style/CheckBoxStyle"
-            android:text="Fixed"
+            android:text="@string/edit_repair_is_fixed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repair_cost_input_layout" />
@@ -82,6 +82,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="false"
+            android:contentDescription="@string/edit_repair_image_description"
             android:cropToPadding="false"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"

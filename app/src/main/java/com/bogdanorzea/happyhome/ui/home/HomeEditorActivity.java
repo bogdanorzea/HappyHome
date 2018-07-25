@@ -64,7 +64,7 @@ public class HomeEditorActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mHome = savedInstanceState.getParcelable(HOME_KEY);
-            if (mHomeId != null) {
+            if (mHome != null) {
                 mHome.id = mHomeId;
             }
             displayHome();

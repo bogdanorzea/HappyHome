@@ -15,7 +15,7 @@
         <EditText
             android:id="@+id/meter_name"
             style="@style/EditTextStyle"
-            android:hint="Meter name" />
+            android:hint="@string/edit_meter_name" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -23,7 +23,7 @@
         <EditText
             android:id="@+id/meter_location"
             style="@style/EditTextStyle"
-            android:hint="Meter location" />
+            android:hint="@string/edit_meter_location" />
     </android.support.design.widget.TextInputLayout>
 
 

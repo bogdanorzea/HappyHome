@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_save"
         android:orderInCategory="100"
-        android:title="Save home"
+        android:title="@string/menu_save_home"
         android:icon="@drawable/round_save_white_24"
         app:showAsAction="ifRoom" />
 
@@ -12,13 +12,13 @@
         android:id="@+id/action_set_current"
         android:orderInCategory="200"
         android:icon="@drawable/round_star_border_white_24"
-        android:title="Use home"
+        android:title="@string/menu_use_home"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_delete"
         android:orderInCategory="300"
         android:icon="@drawable/round_delete_white_24"
-        android:title="Delete home"
+        android:title="@string/menu_delete_home"
         app:showAsAction="ifRoom" />
 </menu>

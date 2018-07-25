@@ -145,7 +145,7 @@ public class MeterEditorActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_utility_editor, menu);
+        getMenuInflater().inflate(R.menu.menu_meter_editor, menu);
 
         return super.onCreateOptionsMenu(menu);
     }

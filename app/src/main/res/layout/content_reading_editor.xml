@@ -15,7 +15,7 @@
         <EditText
             android:id="@+id/reading_date"
             style="@style/EditTextStyle.DatePicker"
-            android:hint="Reading date" />
+            android:hint="@string/edit_reading_date" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -23,7 +23,7 @@
         <EditText
             android:id="@+id/reading_value"
             style="@style/EditTextStyle.Decimal"
-            android:hint="Reading value" />
+            android:hint="@string/edit_reading_value" />
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

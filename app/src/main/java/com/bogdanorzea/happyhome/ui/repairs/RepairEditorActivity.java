@@ -43,7 +43,7 @@ import static com.bogdanorzea.happyhome.utils.FirebaseUtils.REPAIR_PHOTOS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Repair.deleteRepair;
 
 public class RepairEditorActivity extends AppCompatActivity {
-    public static final String REPAIR_KEY = "repair_object";
+    private static final String REPAIR_KEY = "repair_object";
     private static final int RC_PHOTO_PICKER = 24;
 
     private String mHomeId;

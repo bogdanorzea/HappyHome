@@ -2,8 +2,6 @@ package com.bogdanorzea.happyhome;
 
 import android.app.Application;
 
-import com.google.firebase.database.FirebaseDatabase;
-
 import timber.log.Timber;
 
 public class App extends Application {

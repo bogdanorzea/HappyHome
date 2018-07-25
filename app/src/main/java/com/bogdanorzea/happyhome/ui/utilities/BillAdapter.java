@@ -16,9 +16,9 @@ import java.util.List;
 
 import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
-public class BillAdapter extends ArrayAdapter<Bill> {
+class BillAdapter extends ArrayAdapter<Bill> {
 
-    public BillAdapter(@NonNull Context context, List<Bill> objects) {
+    BillAdapter(@NonNull Context context, List<Bill> objects) {
         super(context, 0, objects);
     }
 

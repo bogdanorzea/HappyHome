@@ -15,7 +15,7 @@
         <EditText
             android:id="@+id/issue_date"
             style="@style/EditTextStyle.DatePicker"
-            android:hint="Issue date"/>
+            android:hint="@string/edit_bill_issue_date"/>
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -23,7 +23,7 @@
         <EditText
             android:id="@+id/due_date"
             style="@style/EditTextStyle.DatePicker"
-            android:hint="Due date" />
+            android:hint="@string/edit_bill_due_date" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -31,7 +31,7 @@
         <EditText
             android:id="@+id/bill_value"
             style="@style/EditTextStyle.Decimal"
-            android:hint="Bill value" />
+            android:hint="@string/edit_bill_value" />
     </android.support.design.widget.TextInputLayout>
 
     <CheckBox
@@ -39,6 +39,6 @@
         style="@style/CheckBoxStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Is paid" />
+        android:text="@string/edit_bill_is_paid" />
 
 </LinearLayout>

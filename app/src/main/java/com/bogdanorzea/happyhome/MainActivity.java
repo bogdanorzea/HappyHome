@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         switch (id) {
-            case R.id.nav_home_details:
+            case R.id.nav_homes:
                 HomesFragment homesFragment = new HomesFragment();
 
                 fragmentManager.beginTransaction()

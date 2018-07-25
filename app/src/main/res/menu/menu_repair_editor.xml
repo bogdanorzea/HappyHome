@@ -4,13 +4,13 @@
     <item
         android:id="@+id/action_save"
         android:orderInCategory="100"
-        android:title="Save repair"
+        android:title="@string/menu_save_repair"
         android:icon="@drawable/round_save_white_24"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_add_image"
         android:orderInCategory="200"
-        android:title="Add image"
+        android:title="@string/menu_add_repair_image"
         android:icon="@drawable/round_add_photo_alternate_white_24"
         app:showAsAction="ifRoom" />
 
@@ -18,6 +18,6 @@
         android:id="@+id/action_delete"
         android:orderInCategory="300"
         android:icon="@drawable/round_delete_white_24"
-        android:title="Delete repair"
+        android:title="@string/menu_delete_repair"
         app:showAsAction="ifRoom" />
 </menu>

@@ -6,7 +6,6 @@ import android.os.Parcelable;
 public class Utility implements Parcelable{
     public String id;
     public String name;
-    public String location;
     public String company_name;
     public String company_website;
     public String home_id;
@@ -17,7 +16,6 @@ public class Utility implements Parcelable{
     protected Utility(Parcel in) {
         id = in.readString();
         name = in.readString();
-        location = in.readString();
         company_name = in.readString();
         company_website = in.readString();
         home_id = in.readString();
@@ -44,7 +42,6 @@ public class Utility implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeString(name);
-        dest.writeString(location);
         dest.writeString(company_name);
         dest.writeString(company_website);
         dest.writeString(home_id);

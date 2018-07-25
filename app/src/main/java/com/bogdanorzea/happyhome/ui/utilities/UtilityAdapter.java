@@ -14,9 +14,9 @@ import com.bogdanorzea.happyhome.data.Utility;
 
 import java.util.List;
 
-public class UtilityAdapter extends ArrayAdapter<Utility> {
+class UtilityAdapter extends ArrayAdapter<Utility> {
 
-    public UtilityAdapter(@NonNull Context context, List<Utility> objects) {
+    UtilityAdapter(@NonNull Context context, List<Utility> objects) {
         super(context, 0, objects);
     }
 
@@ -33,7 +33,7 @@ public class UtilityAdapter extends ArrayAdapter<Utility> {
         name.setText(utility.name);
 
         TextView location = convertView.findViewById(R.id.text2);
-        location.setText(utility.location);
+        location.setText(utility.company_name);
 
         convertView.setTag(utility);
 

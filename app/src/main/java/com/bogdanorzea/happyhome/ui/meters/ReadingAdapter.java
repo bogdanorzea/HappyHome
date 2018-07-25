@@ -16,9 +16,9 @@ import java.util.List;
 
 import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
-public class ReadingAdapter extends ArrayAdapter<Reading> {
+class ReadingAdapter extends ArrayAdapter<Reading> {
 
-    public ReadingAdapter(@NonNull Context context, List<Reading> objects) {
+    ReadingAdapter(@NonNull Context context, List<Reading> objects) {
         super(context, 0, objects);
     }
 

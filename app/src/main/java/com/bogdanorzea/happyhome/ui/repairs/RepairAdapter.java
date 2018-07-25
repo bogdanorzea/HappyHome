@@ -14,9 +14,9 @@ import com.bogdanorzea.happyhome.data.Repair;
 
 import java.util.List;
 
-public class RepairAdapter extends ArrayAdapter<Repair> {
+class RepairAdapter extends ArrayAdapter<Repair> {
 
-    public RepairAdapter(@NonNull Context context, List<Repair> objects) {
+    RepairAdapter(@NonNull Context context, List<Repair> objects) {
         super(context, 0, objects);
     }
 

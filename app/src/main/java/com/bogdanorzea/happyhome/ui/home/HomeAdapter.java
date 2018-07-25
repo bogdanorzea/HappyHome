@@ -16,9 +16,9 @@ import com.bogdanorzea.happyhome.data.Home;
 
 import java.util.List;
 
-public class HomeAdapter extends ArrayAdapter<Home> {
+class HomeAdapter extends ArrayAdapter<Home> {
 
-    public HomeAdapter(@NonNull Context context, List<Home> objects) {
+    HomeAdapter(@NonNull Context context, List<Home> objects) {
         super(context, 0, objects);
     }
 

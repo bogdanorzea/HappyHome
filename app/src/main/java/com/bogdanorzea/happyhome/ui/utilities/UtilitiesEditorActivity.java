@@ -34,10 +34,9 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
     private String mUserUid;
     private String mHomeId;
     private String mUtilityId;
-    private EditText mCompanyName;
-    private EditText mCompanyWebsite;
-    private EditText mMeterName;
-    private EditText mMeterLocation;
+    private EditText mCompanyNameEditText;
+    private EditText mCompanyWebsiteEditText;
+    private EditText mUtilityNameEditText;
     private Utility mUtility;
 
     @Override
@@ -49,10 +48,9 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mCompanyName = findViewById(R.id.company_name);
-        mCompanyWebsite = findViewById(R.id.company_website);
-        mMeterName = findViewById(R.id.meter_name);
-        mMeterLocation = findViewById(R.id.meter_location);
+        mCompanyNameEditText = findViewById(R.id.company_name);
+        mCompanyWebsiteEditText = findViewById(R.id.company_website);
+        mUtilityNameEditText = findViewById(R.id.utility_name);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -80,20 +78,18 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
     }
 
     private void saveCurrentUtilityToFirebase() {
-        String companyNameString = mCompanyName.getText().toString();
-        String companyWebsiteString = mCompanyWebsite.getText().toString();
-        String meterNameString = mMeterName.getText().toString();
-        String meterLocationString = mMeterLocation.getText().toString();
+        String companyNameString = mCompanyNameEditText.getText().toString();
+        String companyWebsiteString = mCompanyWebsiteEditText.getText().toString();
+        String meterNameString = mUtilityNameEditText.getText().toString();
 
         if (TextUtils.isEmpty(companyNameString) || TextUtils.isEmpty(companyWebsiteString) ||
-                TextUtils.isEmpty(meterNameString) || TextUtils.isEmpty(meterLocationString)) {
+                TextUtils.isEmpty(meterNameString)) {
             Toast.makeText(UtilitiesEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
             return;
         }
 
         mUtility.home_id = mHomeId;
         mUtility.name = meterNameString;
-        mUtility.location = meterLocationString;
         mUtility.company_name = companyNameString;
         mUtility.company_website = companyWebsiteString;
 
@@ -119,7 +115,6 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
 
         databaseReference.child("home_id").setValue(mUtility.home_id);
         databaseReference.child("name").setValue(mUtility.name);
-        databaseReference.child("location").setValue(mUtility.location);
         databaseReference.child("company_name").setValue(mUtility.company_name);
         databaseReference.child("company_website").setValue(mUtility.company_website);
 
@@ -150,10 +145,9 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
     }
 
     private void displayUtility() {
-        mMeterName.setText(mUtility.name, TextView.BufferType.EDITABLE);
-        mMeterLocation.setText(mUtility.location, TextView.BufferType.EDITABLE);
-        mCompanyName.setText(mUtility.company_name, TextView.BufferType.EDITABLE);
-        mCompanyWebsite.setText(mUtility.company_website, TextView.BufferType.EDITABLE);
+        mUtilityNameEditText.setText(mUtility.name, TextView.BufferType.EDITABLE);
+        mCompanyNameEditText.setText(mUtility.company_name, TextView.BufferType.EDITABLE);
+        mCompanyWebsiteEditText.setText(mUtility.company_website, TextView.BufferType.EDITABLE);
     }
 
     @Override
@@ -216,6 +210,10 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        mUtility.company_name = mCompanyNameEditText.getText().toString();
+        mUtility.company_website = mCompanyWebsiteEditText.getText().toString();
+        mUtility.name = mUtilityNameEditText.getText().toString();
 
         outState.putParcelable(UTILITY_KEY, mUtility);
     }

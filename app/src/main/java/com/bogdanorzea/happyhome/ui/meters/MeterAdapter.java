@@ -14,9 +14,9 @@ import com.bogdanorzea.happyhome.data.Meter;
 
 import java.util.List;
 
-public class MeterAdapter extends ArrayAdapter<Meter> {
+class MeterAdapter extends ArrayAdapter<Meter> {
 
-    public MeterAdapter(@NonNull Context context, List<Meter> objects) {
+    MeterAdapter(@NonNull Context context, List<Meter> objects) {
         super(context, 0, objects);
     }
 

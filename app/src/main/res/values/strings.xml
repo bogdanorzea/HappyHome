@@ -1,11 +1,72 @@
 <resources>
     <string name="app_name">Happy Home</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <!--Shared preference keys-->
     <string name="preferences_name">home_preferences</string>
     <string name="current_home_id">current_home_uid</string>
+
+    <!--Navigation drawer-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_homes_title">Homes</string>
+    <string name="nav_utility_bills_title">Utility bills</string>
+    <string name="nav_meter_readings_title">Meter readings</string>
+    <string name="nav_repairs_needed_title">Repairs needed</string>
+    <string name="nav_logout_title">Logout</string>
+    <string name="nav_settings_title">Settings</string>
+
+    <!--Edit home-->
+    <string name="edit_home_name">Home name</string>
+    <string name="edit_home_location">Home location</string>
+
+    <!--Edit utility-->
+    <string name="edit_utility_company_name">Utility company name</string>
+    <string name="edit_utility_company_website">Utility company website</string>
+    <string name="edit_utility_name">Utility name</string>
+
+    <!--Edit bill-->
+    <string name="edit_bill_issue_date">Issue date</string>
+    <string name="edit_bill_due_date">Due date</string>
+    <string name="edit_bill_value">Bill value</string>
+    <string name="edit_bill_is_paid">Is paid</string>
+
+    <!--Edit repair-->
+    <string name="edit_repair_name">Repair name</string>
+    <string name="edit_repair_location">Repair location</string>
+    <string name="edit_repair_description">Repair description</string>
+    <string name="edit_repair_cost">Repair cost</string>
+    <string name="edit_repair_is_fixed">Is fixed</string>
+    <string name="edit_repair_image_description">Repair image</string>
+    <string name="edit_reading_date">Reading date</string>
+    <string name="edit_reading_value">Reading value</string>
+
+    <!--Edit meter-->
+    <string name="edit_meter_name">Meter name</string>
+    <string name="edit_meter_location">Meter location</string>
+
+    <!--Menu texts-->
+    <string name="menu_edit_utility">Edit utility</string>
+    <string name="menu_save_utility">Save utility</string>
+    <string name="menu_delete_utility">Delete utility</string>
+
+    <string name="menu_add_repair_image">Add image</string>
+    <string name="menu_save_repair">Save repair</string>
+    <string name="menu_delete_repair">Delete repair</string>
+
+    <string name="menu_save_bill">Save bill</string>
+    <string name="menu_delete_bill">Delete bill</string>
+
+    <string name="menu_save_home">Save home</string>
+    <string name="menu_use_home">Use home</string>
+    <string name="menu_delete_home">Delete home</string>
+
+    <string name="menu_save_meter">Save meter</string>
+    <string name="menu_delete_meter">Delete meter</string>
+    <string name="menu_edit_meter">Edit meter</string>
+
+    <string name="menu_save_reading">Save reading</string>
+    <string name="menu_delete_reading">Delete reading</string>
+
 </resources>

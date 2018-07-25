@@ -11,9 +11,17 @@
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
 
         <EditText
+            android:id="@+id/utility_name"
+            style="@style/EditTextStyle"
+            android:hint="@string/edit_utility_name" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
+
+        <EditText
             android:id="@+id/company_name"
             style="@style/EditTextStyle"
-            android:hint="Utility company name" />
+            android:hint="@string/edit_utility_company_name" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
@@ -21,23 +29,7 @@
         <EditText
             android:id="@+id/company_website"
             style="@style/EditTextStyle"
-            android:hint="Utility company website" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
-
-        <EditText
-            android:id="@+id/meter_name"
-            style="@style/EditTextStyle"
-            android:hint="Meter name" />
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout style="@style/TextInputLayoutStyle">
-
-        <EditText
-            android:id="@+id/meter_location"
-            style="@style/EditTextStyle"
-            android:hint="Meter location" />
+            android:hint="@string/edit_utility_company_website" />
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

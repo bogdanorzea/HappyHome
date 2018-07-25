@@ -7,21 +7,21 @@
         android:id="@+id/nav_menu_top"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home_details"
+            android:id="@+id/nav_homes"
             android:icon="@drawable/ic_round_home"
-            android:title="Home details" />
+            android:title="@string/nav_homes_title" />
         <item
             android:id="@+id/nav_bills"
             android:icon="@drawable/ic_round_attach_money"
-            android:title="Utility bills" />
+            android:title="@string/nav_utility_bills_title" />
         <item
             android:id="@+id/nav_readings"
             android:icon="@drawable/ic_round_power"
-            android:title="Meter readings" />
+            android:title="@string/nav_meter_readings_title" />
         <item
             android:id="@+id/nav_repairs"
             android:icon="@drawable/ic_round_build"
-            android:title="Repairs needed" />
+            android:title="@string/nav_repairs_needed_title" />
     </group>
 
     <group
@@ -30,10 +30,10 @@
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_round_settings"
-            android:title="Settings" />
+            android:title="@string/nav_settings_title" />
         <item
             android:id="@+id/nav_logout"
-            android:title="Logout" />
+            android:title="@string/nav_logout_title" />
     </group>
 
 </menu>
