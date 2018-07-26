@@ -1,4 +1,4 @@
-package com.bogdanorzea.happyhome;
+package com.bogdanorzea.happyhome.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,17 +11,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bogdanorzea.happyhome.R;
+import com.bogdanorzea.happyhome.ui.home.HomesFragment;
 import com.bogdanorzea.happyhome.ui.meters.MetersFragment;
 import com.bogdanorzea.happyhome.ui.repairs.RepairsFragment;
 import com.bogdanorzea.happyhome.ui.utilities.UtilitiesFragment;
-import com.bogdanorzea.happyhome.ui.home.HomesFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 1;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +52,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity
 
         TextView userEmailTextView = headerView.findViewById(R.id.user_email);
         userEmailTextView.setText(userEmail);
+
+        mNavigationView.getMenu().performIdentifierAction(R.id.nav_homes, 0);
     }
 
     @Override
@@ -114,13 +117,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -160,9 +156,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_logout:
                 AuthUI.getInstance().signOut(this);
-                break;
-            case R.id.nav_settings:
-                Toast.makeText(this, "More settings will be added soon", Toast.LENGTH_SHORT).show();
                 break;
         }
 

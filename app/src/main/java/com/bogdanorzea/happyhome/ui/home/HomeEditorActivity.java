@@ -58,7 +58,10 @@ public class HomeEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("homeId")) {
+                setTitle("Edit home");
                 mHomeId = intent.getStringExtra("homeId");
+            } else {
+                setTitle("Add home");
             }
         }
 
