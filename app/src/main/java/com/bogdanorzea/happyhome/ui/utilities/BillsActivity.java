@@ -134,7 +134,7 @@ public class BillsActivity extends AppCompatActivity {
     }
 
     private void initializeAdMobView() {
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544/6300978111");
+        MobileAds.initialize(this, getString(R.string.admob_id));
 
         AdView mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();

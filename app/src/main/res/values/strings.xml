@@ -73,4 +73,7 @@
     <string name="menu_save_reading">Save reading</string>
     <string name="menu_delete_reading">Delete reading</string>
 
+    <!--AdMob ID-->
+    <string name="admob_id">ca-app-pub-3940256099942544/6300978111</string>
+
 </resources>

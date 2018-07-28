@@ -97,7 +97,7 @@ public class HomesFragment extends Fragment {
     }
 
     private void initializeAdMobView(View rootView) {
-        MobileAds.initialize(getContext(), "ca-app-pub-3940256099942544/6300978111");
+        MobileAds.initialize(getContext(), getString(R.string.admob_id));
 
         AdView mAdView = rootView.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
