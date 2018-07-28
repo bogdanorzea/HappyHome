@@ -76,4 +76,13 @@
     <!--AdMob ID-->
     <string name="admob_id">ca-app-pub-3940256099942544/6300978111</string>
 
+    <!--Widget-->
+    <string name="appwidget_text">Repair report</string>
+    <string name="add_widget">Add widget</string>
+    <string name="no_repairs">Hurray, no repairs needed!</string>
+    <plurals name="numberOfRepairs">
+        <item quantity="one">There is %d repair not fixed yet.</item>
+        <item quantity="other">There are %d repairs not fixed yet.</item>
+    </plurals>
+
 </resources>

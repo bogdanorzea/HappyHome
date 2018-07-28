@@ -80,6 +80,32 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
+
+        onNewIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent != null) {
+            if (intent.hasExtra("nav_location")) {
+                String location = intent.getStringExtra("nav_location");
+
+                int locationId;
+                switch (location) {
+                    case "repairs": {
+                        locationId = R.id.nav_repairs;
+                        break;
+                    }
+                    default:
+                        return;
+                }
+
+                mNavigationView.setCheckedItem(locationId);
+                onNavigationItemSelected(mNavigationView.getMenu().findItem(locationId));
+            }
+        }
     }
 
     private void onSignInInitialize(String displayName, Uri photoUrl, String userEmail) {

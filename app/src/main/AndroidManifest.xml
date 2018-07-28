@@ -31,8 +31,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.utilities.BillsActivity"
-            android:launchMode="singleTop"
             android:label="@string/label_utility"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -49,14 +49,24 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.meters.ReadingsActivity"
-            android:launchMode="singleTop"
             android:label="@string/label_meter"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.meters.ReadingEditorActivity"
             android:parentActivityName=".ui.meters.ReadingsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".widget.RepairsWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/repairs_widget_info" />
+        </receiver>
     </application>
 
 </manifest>
