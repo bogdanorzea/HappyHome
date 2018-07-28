@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "593634257312",
+    "firebase_url": "https://happy-home-bogdan.firebaseio.com",
+    "project_id": "happy-home-bogdan",
+    "storage_bucket": "happy-home-bogdan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593634257312:android:56e4a93c2015ed09",
+        "android_client_info": {
+          "package_name": "com.bogdanorzea.happyhome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593634257312-h1jc6drohug7gcbvm29qp4t39okjokrn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bogdanorzea.happyhome",
+            "certificate_hash": "4b1ed2ffc1595657fc8fef50fee030d54f4be49b"
+          }
+        },
+        {
+          "client_id": "593634257312-ojivl5q5ilgcspeqen2b3771b947vp6n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBumxtxlOhzxfEoFmdlHC0QHYmJasXE4jo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "593634257312-ojivl5q5ilgcspeqen2b3771b947vp6n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
