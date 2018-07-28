@@ -87,8 +87,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
 
-        if (intent != null) {
+        if (user != null && intent != null) {
             if (intent.hasExtra("nav_location")) {
                 String location = intent.getStringExtra("nav_location");
 

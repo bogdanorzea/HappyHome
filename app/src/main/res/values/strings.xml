@@ -84,5 +84,6 @@
         <item quantity="one">There is %d repair not fixed yet.</item>
         <item quantity="other">There are %d repairs not fixed yet.</item>
     </plurals>
+    <string name="chose_current_home">Please go to Homes section to chose the current home</string>
 
 </resources>

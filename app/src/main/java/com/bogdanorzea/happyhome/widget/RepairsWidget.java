@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 import com.bogdanorzea.happyhome.R;
@@ -33,6 +34,20 @@ public class RepairsWidget extends AppWidgetProvider {
 
         SharedPreferences sharedPref = context.getSharedPreferences(context.getString(R.string.preferences_name), Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(context.getString(R.string.current_home_id), "");
+        if (TextUtils.isEmpty(homeId)){
+            // Construct the RemoteViews object
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.repairs_widget);
+
+            // Update TextViews
+            views.setTextViewText(R.id.widget_details, context.getText(R.string.chose_current_home));
+
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            views.setOnClickPendingIntent(R.id.widget_details, pendingIntent);
+
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
 
         databaseReference = FirebaseDatabase.getInstance()
                 .getReference()

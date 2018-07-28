@@ -217,6 +217,8 @@ public class HomeEditorActivity extends AppCompatActivity {
                 switch (which) {
                     case DialogInterface.BUTTON_POSITIVE:
                         deleteHome(mHomeId);
+                        removeHomeFromPreferences();
+
                         finish();
                         break;
 
@@ -232,6 +234,19 @@ public class HomeEditorActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", dialogClickListener)
                 .setNegativeButton("No", dialogClickListener)
                 .show();
+    }
+
+    private void removeHomeFromPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);
+        String currentHomePreferenceKey = getString(R.string.current_home_id);
+        String currentHomeId = sharedPref.getString(currentHomePreferenceKey, "");
+
+        if (mHomeId.equals(currentHomeId)) {
+            sharedPref.edit()
+                    .remove(currentHomePreferenceKey)
+                    .apply();
+            Timber.d("Preference %s was removed", currentHomePreferenceKey);
+        }
     }
 
     @Override

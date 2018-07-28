@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,44 +59,49 @@ public class UtilitiesFragment extends Fragment {
                 .getSharedPreferences(getString(R.string.preferences_name), Context.MODE_PRIVATE);
         final String homeId = sharedPref.getString(getString(R.string.current_home_id), "");
 
-        mDatabaseReference = FirebaseDatabase.getInstance()
-                .getReference()
-                .child(HOMES_PATH)
-                .child(homeId)
-                .child(UTILITIES_PATH);
-
+        ListView listView = rootView.findViewById(R.id.list_view);
+        TextView emptyView = rootView.findViewById(R.id.empty_view);
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), UtilitiesEditorActivity.class);
-                intent.putExtra("userUid", mUserUid);
-                intent.putExtra("homeId", homeId);
-                startActivity(intent);
-            }
-        });
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
         List<Utility> arrayList = new ArrayList();
         mAdapter = new UtilityAdapter(getContext(), arrayList);
-
-        ListView listView = rootView.findViewById(R.id.list_view);
-        TextView emptyView = rootView.findViewById(R.id.empty_view);
-        mProgressBar = rootView.findViewById(R.id.progressBar);
-
         listView.setAdapter(mAdapter);
         listView.setEmptyView(emptyView);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getContext(), BillsActivity.class);
-                intent.putExtra("userUid", mUserUid);
-                intent.putExtra("homeId", homeId);
-                intent.putExtra("utilityId", view.getTag().toString());
+        if (TextUtils.isEmpty(homeId)) {
+            emptyView.setText(R.string.chose_current_home);
+            fab.setVisibility(View.INVISIBLE);
+        } else {
+            mDatabaseReference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child(HOMES_PATH)
+                    .child(homeId)
+                    .child(UTILITIES_PATH);
 
-                startActivity(intent);
-            }
-        });
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getContext(), UtilitiesEditorActivity.class);
+                    intent.putExtra("userUid", mUserUid);
+                    intent.putExtra("homeId", homeId);
+                    startActivity(intent);
+                }
+            });
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getContext(), BillsActivity.class);
+                    intent.putExtra("userUid", mUserUid);
+                    intent.putExtra("homeId", homeId);
+                    intent.putExtra("utilityId", view.getTag().toString());
+
+                    startActivity(intent);
+                }
+            });
+        }
 
         initializeAdMobView(rootView);
 
@@ -111,7 +117,7 @@ public class UtilitiesFragment extends Fragment {
     }
 
     private void attachDatabaseReadListener() {
-        if (mChildEventListener == null) {
+        if (mChildEventListener == null && mDatabaseReference != null) {
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -167,7 +173,7 @@ public class UtilitiesFragment extends Fragment {
     }
 
     private void detachDatabaseReadListener() {
-        if (mChildEventListener != null) {
+        if (mChildEventListener != null && mDatabaseReference != null) {
             mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
