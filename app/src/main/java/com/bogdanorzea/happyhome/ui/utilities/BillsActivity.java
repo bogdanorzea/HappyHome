@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Bill;
+import com.bogdanorzea.happyhome.data.Utility;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -32,6 +34,7 @@ import java.util.List;
 
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.BILLS_PATH;
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.UTILITIES_KEY;
+import static com.bogdanorzea.happyhome.utils.FirebaseUtils.UTILITIES_PATH;
 
 public class BillsActivity extends AppCompatActivity {
     private String mUserUid;
@@ -71,10 +74,6 @@ public class BillsActivity extends AppCompatActivity {
             if (intent.hasExtra("utilityId")) {
                 mUtilityId = intent.getStringExtra("utilityId");
             }
-
-            if (intent.hasExtra("utilityName")) {
-                setTitle(intent.getStringExtra("utilityName"));
-            }
         }
 
         mDatabaseReference = FirebaseDatabase.getInstance()
@@ -109,6 +108,29 @@ public class BillsActivity extends AppCompatActivity {
         });
 
         initializeAdMobView();
+    }
+
+    private void setTitleFromUtilityName() {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(UTILITIES_PATH)
+                .child(mUtilityId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Utility utility = dataSnapshot.getValue(Utility.class);
+                        if (utility == null) {
+                            return;
+                        }
+
+                        setTitle(utility.name);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void initializeAdMobView() {
@@ -191,6 +213,10 @@ public class BillsActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!TextUtils.isEmpty(mUtilityId)) {
+            setTitleFromUtilityName();
+        }
 
         mAdapter.clear();
         attachDatabaseReadListener();

@@ -91,13 +91,12 @@ public class MetersFragment extends Fragment {
                 Intent intent = new Intent(getContext(), ReadingsActivity.class);
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", homeId);
-                intent.putExtra("meterId", ((Meter) view.getTag()).id.toString());
-                intent.putExtra("meterName", ((Meter) view.getTag()).name.toString());
+                intent.putExtra("meterId", view.getTag().toString());
 
                 startActivity(intent);
             }
         });
-        
+
         initializeAdMobView(rootView);
 
         return rootView;

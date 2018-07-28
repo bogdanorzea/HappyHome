@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bogdanorzea.happyhome.R;
+import com.bogdanorzea.happyhome.data.Meter;
 import com.bogdanorzea.happyhome.data.Reading;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -71,10 +73,6 @@ public class ReadingsActivity extends AppCompatActivity {
             if (intent.hasExtra("meterId")) {
                 mMeterId = intent.getStringExtra("meterId");
             }
-
-            if (intent.hasExtra("meterName")) {
-                setTitle(intent.getStringExtra("meterName"));
-            }
         }
 
         mHomeUtilitiesDatabaseReference = FirebaseDatabase.getInstance()
@@ -108,6 +106,29 @@ public class ReadingsActivity extends AppCompatActivity {
         });
 
         initializeAdMobView();
+    }
+
+    private void setTitleFromMeterName() {
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child(METERS_PATH)
+                .child(mMeterId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Meter meter = dataSnapshot.getValue(Meter.class);
+                        if (meter == null) {
+                            return;
+                        }
+
+                        setTitle(meter.name);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void initializeAdMobView() {
@@ -190,6 +211,10 @@ public class ReadingsActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (!TextUtils.isEmpty(mMeterId)) {
+            setTitleFromMeterName();
+        }
 
         mAdapter.clear();
         attachDatabaseReadListener();

@@ -35,7 +35,7 @@ class UtilityAdapter extends ArrayAdapter<Utility> {
         TextView location = convertView.findViewById(R.id.text2);
         location.setText(utility.company_name);
 
-        convertView.setTag(utility);
+        convertView.setTag(utility.id);
 
         return convertView;
     }

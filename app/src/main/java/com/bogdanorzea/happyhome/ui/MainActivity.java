@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavigationView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity
 
                 if (user != null) {
                     onSignInInitialize(user.getDisplayName(), user.getPhotoUrl(), user.getEmail());
+                    if (getSupportFragmentManager().getFragments().isEmpty()) {
+                        mNavigationView.setCheckedItem(R.id.nav_homes);
+                        onNavigationItemSelected(mNavigationView.getMenu().findItem(R.id.nav_homes));
+                    }
                 } else {
                     startActivityForResult(
                             AuthUI.getInstance()
@@ -89,8 +93,6 @@ public class MainActivity extends AppCompatActivity
 
         TextView userEmailTextView = headerView.findViewById(R.id.user_email);
         userEmailTextView.setText(userEmail);
-
-        mNavigationView.getMenu().performIdentifierAction(R.id.nav_homes, 0);
     }
 
     @Override
@@ -178,4 +180,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 }

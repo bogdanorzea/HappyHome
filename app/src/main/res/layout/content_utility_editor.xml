@@ -29,7 +29,8 @@
         <EditText
             android:id="@+id/company_website"
             style="@style/EditTextStyle"
-            android:hint="@string/edit_utility_company_website" />
+            android:hint="@string/edit_utility_company_website"
+            android:inputType="textWebEditText" />
     </android.support.design.widget.TextInputLayout>
 
 </LinearLayout>

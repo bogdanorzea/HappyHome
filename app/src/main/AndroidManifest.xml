@@ -32,6 +32,7 @@
         <activity
             android:name=".ui.utilities.BillsActivity"
             android:launchMode="singleTop"
+            android:label="@string/label_utility"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -49,6 +50,7 @@
         <activity
             android:name=".ui.meters.ReadingsActivity"
             android:launchMode="singleTop"
+            android:label="@string/label_meter"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

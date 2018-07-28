@@ -2,6 +2,10 @@
     <!--Application name-->
     <string name="app_name">Happy Home</string>
 
+    <!--Labels for Activities-->
+    <string name="label_utility">Utility</string>
+    <string name="label_meter">Meter</string>
+
     <!--Shared preference keys-->
     <string name="preferences_name">home_preferences</string>
     <string name="current_home_id">current_home_uid</string>
