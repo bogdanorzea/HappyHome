@@ -84,7 +84,7 @@
             android:adjustViewBounds="false"
             android:contentDescription="@string/edit_repair_image_description"
             android:cropToPadding="false"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -2,9 +2,15 @@ package com.bogdanorzea.happyhome.ui.repairs;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +28,6 @@ import android.widget.Toast;
 import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Repair;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +40,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import timber.log.Timber;
 
 import static com.bogdanorzea.happyhome.utils.FirebaseUtils.HOMES_PATH;
@@ -44,10 +55,11 @@ import static com.bogdanorzea.happyhome.utils.FirebaseUtils.Repair.deleteRepair;
 
 public class RepairEditorActivity extends AppCompatActivity {
     private static final String REPAIR_KEY = "repair_object";
-    private static final int RC_PHOTO_PICKER = 24;
+    private static final int REQUEST_IMAGE_CAPTURE = 24;
 
     private String mHomeId;
     private String mRepairId;
+    private String mImageAbsolutePath;
     private Repair mRepair;
 
     private ImageView mImageView;
@@ -57,7 +69,6 @@ public class RepairEditorActivity extends AppCompatActivity {
     private EditText mDescriptionEditText;
     private EditText mCostEditText;
     private CheckBox mIsFixedCheckBox;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,48 +191,50 @@ public class RepairEditorActivity extends AppCompatActivity {
         finish();
     }
 
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(timeStamp, ".jpg", storageDir);
+
+        mImageAbsolutePath = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Timber.d("Could not create image file.");
+            }
+
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             mProgressBar.setVisibility(View.VISIBLE);
 
-            Uri selectedImageUri = data.getData();
+            if (!TextUtils.isEmpty(mImageAbsolutePath)) {
+                Timber.d("Image stored as %s", mImageAbsolutePath);
 
-            final StorageReference photoRef = FirebaseStorage.getInstance()
-                    .getReference()
-                    .child(REPAIR_PHOTOS_PATH)
-                    .child(selectedImageUri.getLastPathSegment());
-
-            photoRef.putFile(selectedImageUri)
-                    .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
-                            }
-
-                            return photoRef.getDownloadUrl();
-                        }
-                    })
-                    .addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                mRepair.image_uri = task.getResult().toString();
-
-                                Glide.with(RepairEditorActivity.this)
-                                        .load(mRepair.image_uri)
-                                        .apply(new RequestOptions().override(1024, 1024).centerCrop())
-                                        .into(mImageView);
-
-                                mProgressBar.setVisibility(View.GONE);
-                            } else {
-                                Toast.makeText(RepairEditorActivity.this, R.string.toast_error_uploading_image, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                File imageFile = new File(mImageAbsolutePath);
+                if (imageFile.exists()) {
+                    new ResizeAndUploadAsyncTask().execute(mImageAbsolutePath);
+                }
+            }
         }
     }
 
@@ -248,10 +261,7 @@ public class RepairEditorActivity extends AppCompatActivity {
                 saveCurrentRepairToFirebase();
                 return true;
             case R.id.action_add_image:
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, getString(R.string.complete_action_using)), RC_PHOTO_PICKER);
+                dispatchTakePictureIntent();
                 return true;
             case R.id.action_delete:
                 confirmDelete();
@@ -300,5 +310,78 @@ public class RepairEditorActivity extends AppCompatActivity {
         mRepair.fixed = mIsFixedCheckBox.isChecked();
 
         outState.putParcelable(REPAIR_KEY, mRepair);
+    }
+
+    private class ResizeAndUploadAsyncTask extends AsyncTask<String, Void, byte[]> {
+        private Uri selectedImageUri;
+
+        @Override
+        protected byte[] doInBackground(String... strings) {
+            String imagePath = strings[0];
+            selectedImageUri = Uri.fromFile(new File(imagePath));
+
+            // Get the dimensions of the bitmap
+            BitmapFactory.Options bitmapFactoryOptions = new BitmapFactory.Options();
+            bitmapFactoryOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(imagePath, bitmapFactoryOptions);
+            int photoW = bitmapFactoryOptions.outWidth;
+            int photoH = bitmapFactoryOptions.outHeight;
+            int minSize = Math.min(photoW, photoH);
+
+            // Determine how much to scale down the image
+            int scaleFactor = minSize / 1080;
+
+            // Decode the image file into a Bitmap sized to fill the View
+            bitmapFactoryOptions.inJustDecodeBounds = false;
+            bitmapFactoryOptions.inSampleSize = scaleFactor;
+            bitmapFactoryOptions.inPurgeable = true;
+
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bitmapFactoryOptions);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 95, baos);
+
+            return baos.toByteArray();
+        }
+
+        @Override
+        protected void onPostExecute(byte[] bytes) {
+            if (bytes != null) {
+                final StorageReference photoRef = FirebaseStorage.getInstance()
+                        .getReference()
+                        .child(REPAIR_PHOTOS_PATH)
+                        .child(selectedImageUri.getLastPathSegment());
+
+                photoRef.putBytes(bytes)
+                        .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+
+                                return photoRef.getDownloadUrl();
+                            }
+                        })
+                        .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    Timber.d("Successfully uploaded image with URI %s", selectedImageUri);
+
+                                    mRepair.image_uri = task.getResult().toString();
+                                    if (!TextUtils.isEmpty(mRepair.image_uri)) {
+                                        Glide.with(RepairEditorActivity.this)
+                                                .load(mRepair.image_uri)
+                                                .into(mImageView);
+                                    }
+                                    mProgressBar.setVisibility(View.GONE);
+                                } else {
+                                    Toast.makeText(RepairEditorActivity.this, R.string.toast_error_uploading_image, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        }
     }
 }
