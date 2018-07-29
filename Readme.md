@@ -12,6 +12,7 @@ Capstone project Submission for Android Developer Nanodegree Program.
 * [Glide](https://github.com/bumptech/glide)
 * [Firebase Auth](https://firebase.google.com/docs/auth/)
 * [Firebase Auth UI](https://github.com/firebase/FirebaseUI-Android)
+* [Firebase Crashlytics](https://firebase.google.com/products/crashlytics/)
 * [Firebase Database](https://firebase.google.com/docs/database/)
 * [Firebase Storage](https://firebase.google.com/docs/storage/)
 * [Timber](https://github.com/JakeWharton/timber)
