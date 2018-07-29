@@ -60,10 +60,10 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("utilityId")) {
-                setTitle("Edit utility");
+                setTitle(getString(R.string.title_edit_utility));
                 mUtilityId = intent.getStringExtra("utilityId");
             } else {
-                setTitle("Add utility");
+                setTitle(getString(R.string.title_add_utility));
             }
         }
 
@@ -84,7 +84,7 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(companyNameString) || TextUtils.isEmpty(companyWebsiteString) ||
                 TextUtils.isEmpty(meterNameString)) {
-            Toast.makeText(UtilitiesEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UtilitiesEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -201,9 +201,9 @@ public class UtilitiesEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this utility?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_utility)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 

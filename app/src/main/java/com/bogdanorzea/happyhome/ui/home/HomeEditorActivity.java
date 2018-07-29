@@ -58,10 +58,10 @@ public class HomeEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("homeId")) {
-                setTitle("Edit home");
+                setTitle(getString(R.string.title_edit_home));
                 mHomeId = intent.getStringExtra("homeId");
             } else {
-                setTitle("Add home");
+                setTitle(getString(R.string.title_add_home));
             }
         }
 
@@ -113,7 +113,7 @@ public class HomeEditorActivity extends AppCompatActivity {
         String homeLocationString = mHomeLocationEditText.getText().toString();
 
         if (TextUtils.isEmpty(homeNameString) || TextUtils.isEmpty(homeLocationString)) {
-            Toast.makeText(HomeEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(HomeEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -230,9 +230,9 @@ public class HomeEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this home?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_home)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 

@@ -58,10 +58,10 @@ public class MeterEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("meterId")) {
-                setTitle("Edit meter");
+                setTitle(getString(R.string.title_edit_meter));
                 mMeterId = intent.getStringExtra("meterId");
             } else {
-                setTitle("Add meter");
+                setTitle(getString(R.string.title_add_meter));
             }
         }
 
@@ -108,7 +108,7 @@ public class MeterEditorActivity extends AppCompatActivity {
         String meterLocationString = mMeterLocationEditText.getText().toString();
 
         if (TextUtils.isEmpty(meterNameString) || TextUtils.isEmpty(meterLocationString)) {
-            Toast.makeText(MeterEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MeterEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -194,9 +194,9 @@ public class MeterEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this meter?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_meter)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 

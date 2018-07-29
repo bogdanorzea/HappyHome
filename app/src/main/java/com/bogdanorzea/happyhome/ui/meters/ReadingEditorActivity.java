@@ -71,10 +71,10 @@ public class ReadingEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("readingId")) {
-                setTitle("Edit reading");
+                setTitle(getString(R.string.title_edit_reading));
                 mReadingId = intent.getStringExtra("readingId");
             } else {
-                setTitle("Add reading");
+                setTitle(getString(R.string.title_add_reading));
             }
         }
 
@@ -122,7 +122,7 @@ public class ReadingEditorActivity extends AppCompatActivity {
         String readingValueString = mReadingValueEditText.getText().toString();
 
         if (TextUtils.isEmpty(readingDateString) || TextUtils.isEmpty(readingValueString)) {
-            Toast.makeText(ReadingEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ReadingEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -234,9 +234,9 @@ public class ReadingEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this bill?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_bill)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 

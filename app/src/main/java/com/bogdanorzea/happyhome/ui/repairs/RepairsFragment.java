@@ -51,7 +51,7 @@ public class RepairsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Repairs");
+        getActivity().setTitle(getString(R.string.title_repairs));
 
         View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 

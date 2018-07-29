@@ -83,10 +83,10 @@ public class RepairEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("repairId")) {
-                setTitle("Edit repair");
+                setTitle(getString(R.string.title_edit_repair));
                 mRepairId = intent.getStringExtra("repairId");
             } else {
-                setTitle("Add repair");
+                setTitle(getString(R.string.title_add_repair));
             }
         }
 
@@ -144,7 +144,7 @@ public class RepairEditorActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(repairNameString) || TextUtils.isEmpty(repairLocationString) ||
                 TextUtils.isEmpty(repairDescriptionString) || TextUtils.isEmpty(repairCostString)) {
-            Toast.makeText(RepairEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RepairEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -218,7 +218,7 @@ public class RepairEditorActivity extends AppCompatActivity {
 
                                 mProgressBar.setVisibility(View.GONE);
                             } else {
-                                Toast.makeText(RepairEditorActivity.this, "Error uploading the image", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RepairEditorActivity.this, R.string.toast_error_uploading_image, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -251,7 +251,7 @@ public class RepairEditorActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                startActivityForResult(Intent.createChooser(intent, getString(R.string.complete_action_using)), RC_PHOTO_PICKER);
                 return true;
             case R.id.action_delete:
                 confirmDelete();
@@ -282,9 +282,9 @@ public class RepairEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this repair?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_repair)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 

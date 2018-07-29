@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="No results" />
+        android:text="@string/no_results_warning" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_above="@id/adView"

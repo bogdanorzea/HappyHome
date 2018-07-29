@@ -198,10 +198,10 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Signed in successfully", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Sign in cancelled", Toast.LENGTH_SHORT).show();
+            if (resultCode == RESULT_OK)
+                Toast.makeText(this, R.string.toast_sign_in_successfully, Toast.LENGTH_SHORT).show();
+            else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, R.string.tost_sign_in_cancelled, Toast.LENGTH_SHORT).show();
                 finish();
             }
         }

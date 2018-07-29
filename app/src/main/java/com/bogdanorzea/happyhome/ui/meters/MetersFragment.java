@@ -51,7 +51,7 @@ public class MetersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle("Meters");
+        getActivity().setTitle(getString(R.string.title_meters));
 
         View rootView = inflater.inflate(R.layout.listview_with_fab, container, false);
 

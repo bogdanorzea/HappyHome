@@ -76,10 +76,10 @@ public class BillEditorActivity extends AppCompatActivity {
             }
 
             if (intent.hasExtra("billId")) {
-                setTitle("Edit bill");
+                setTitle(getString(R.string.title_edit_bill));
                 mBillId = intent.getStringExtra("billId");
             } else {
-                setTitle("Add bill");
+                setTitle(getString(R.string.title_add_bill));
             }
         }
 
@@ -183,7 +183,7 @@ public class BillEditorActivity extends AppCompatActivity {
 
         if (TextUtils.isEmpty(issueDateString) || TextUtils.isEmpty(dueDateString) ||
                 TextUtils.isEmpty(billValueString)) {
-            Toast.makeText(BillEditorActivity.this, "Data is missing", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BillEditorActivity.this, R.string.toast_data_is_missing, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -269,9 +269,9 @@ public class BillEditorActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Are you sure you want to delete this bill?")
-                .setPositiveButton("Yes", dialogClickListener)
-                .setNegativeButton("No", dialogClickListener)
+        builder.setMessage(R.string.confirm_delete_bill)
+                .setPositiveButton(R.string.button_yes, dialogClickListener)
+                .setNegativeButton(R.string.button_no, dialogClickListener)
                 .show();
     }
 
