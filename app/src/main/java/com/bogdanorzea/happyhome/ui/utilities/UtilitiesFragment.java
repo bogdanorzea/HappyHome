@@ -78,6 +78,7 @@ public class UtilitiesFragment extends Fragment {
                     .child(HOMES_PATH)
                     .child(homeId)
                     .child(UTILITIES_PATH);
+            mDatabaseReference.keepSynced(true);
 
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(new View.OnClickListener() {

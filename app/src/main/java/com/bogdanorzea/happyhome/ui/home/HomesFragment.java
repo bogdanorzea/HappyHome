@@ -60,6 +60,7 @@ public class HomesFragment extends Fragment {
                 .child(MEMBERS_PATH)
                 .child(mUserUid)
                 .child(HOMES_PATH);
+        mDatabaseReference.keepSynced(true);
 
         FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

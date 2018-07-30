@@ -78,6 +78,7 @@ public class MetersFragment extends Fragment {
                     .child(HOMES_PATH)
                     .child(homeId)
                     .child(METERS_PATH);
+            mDatabaseReference.keepSynced(true);
 
             fab.setVisibility(View.VISIBLE);
             fab.setOnClickListener(new View.OnClickListener() {
