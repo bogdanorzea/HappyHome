@@ -13,6 +13,7 @@ import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Reading;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
@@ -30,14 +31,15 @@ class ReadingAdapter extends ArrayAdapter<Reading> {
         }
 
         Reading item = getItem(position);
+        if (item != null) {
+            TextView date = convertView.findViewById(R.id.text1);
+            date.setText(String.format(Locale.US, "%.3f", item.value));
 
-        TextView date = convertView.findViewById(R.id.text1);
-        date.setText(item.value.toString());
+            TextView value = convertView.findViewById(R.id.text2);
+            value.setText(getReadableFormatFromDateString(item.date));
 
-        TextView value = convertView.findViewById(R.id.text2);
-        value.setText(getReadableFormatFromDateString(item.date));
-
-        convertView.setTag(item.id);
+            convertView.setTag(item.id);
+        }
 
         return convertView;
     }

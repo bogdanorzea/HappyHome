@@ -180,7 +180,7 @@ public class ReadingEditorActivity extends AppCompatActivity {
 
     private void displayReading() {
         mReadingDateEditText.setText(getReadableFormatFromDateString(mReading.date), TextView.BufferType.EDITABLE);
-        mReadingValueEditText.setText(Double.toString(mReading.value), TextView.BufferType.EDITABLE);
+        mReadingValueEditText.setText(String.format(Locale.US, "%.3f", mReading.value), TextView.BufferType.EDITABLE);
     }
 
     @Override

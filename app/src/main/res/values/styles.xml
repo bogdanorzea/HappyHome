@@ -24,6 +24,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ems">10</item>
         <item name="android:inputType">textCapSentences|textPersonName</item>
+        <item name="android:imeOptions">flagNoExtractUi</item>
     </style>
 
     <style name="EditTextStyle.MultiLine" parent="EditTextStyle">

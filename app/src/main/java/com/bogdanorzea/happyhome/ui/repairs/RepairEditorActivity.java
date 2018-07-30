@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -137,7 +138,7 @@ public class RepairEditorActivity extends AppCompatActivity {
         mNameEditText.setText(mRepair.name, TextView.BufferType.EDITABLE);
         mLocationEditText.setText(mRepair.location, TextView.BufferType.EDITABLE);
         mDescriptionEditText.setText(mRepair.description, TextView.BufferType.EDITABLE);
-        mCostEditText.setText(mRepair.cost.toString(), TextView.BufferType.EDITABLE);
+        mCostEditText.setText(String.format(Locale.US, "%.2f", mRepair.cost), TextView.BufferType.EDITABLE);
         mIsFixedCheckBox.setChecked(mRepair.fixed);
 
         if (!TextUtils.isEmpty(mRepair.image_uri)) {

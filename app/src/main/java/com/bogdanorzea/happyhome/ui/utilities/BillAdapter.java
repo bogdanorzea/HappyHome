@@ -13,6 +13,7 @@ import com.bogdanorzea.happyhome.R;
 import com.bogdanorzea.happyhome.data.Bill;
 
 import java.util.List;
+import java.util.Locale;
 
 import static com.bogdanorzea.happyhome.utils.StringUtils.getReadableFormatFromDateString;
 
@@ -30,14 +31,15 @@ class BillAdapter extends ArrayAdapter<Bill> {
         }
 
         Bill item = getItem(position);
+        if (item != null) {
+            TextView name = convertView.findViewById(R.id.text1);
+            name.setText(String.format(Locale.US, "%.2f", item.value));
 
-        TextView name = convertView.findViewById(R.id.text1);
-        name.setText(item.value.toString());
+            TextView location = convertView.findViewById(R.id.text2);
+            location.setText(getReadableFormatFromDateString(item.issue_date));
 
-        TextView location = convertView.findViewById(R.id.text2);
-        location.setText(getReadableFormatFromDateString(item.issue_date));
-
-        convertView.setTag(item);
+            convertView.setTag(item);
+        }
 
         return convertView;
     }

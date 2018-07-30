@@ -172,7 +172,7 @@ public class BillEditorActivity extends AppCompatActivity {
     private void displayBill() {
         mIssueDateEditText.setText(getReadableFormatFromDateString(mBill.issue_date), TextView.BufferType.EDITABLE);
         mDueDateEditText.setText(getReadableFormatFromDateString(mBill.due_date), TextView.BufferType.EDITABLE);
-        mBillValueEditText.setText(mBill.value.toString(), TextView.BufferType.EDITABLE);
+        mBillValueEditText.setText(String.format(Locale.US, "%.2f", mBill.value), TextView.BufferType.EDITABLE);
         mIsPayedCheckBox.setChecked(mBill.paid);
     }
 

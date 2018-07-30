@@ -95,9 +95,10 @@
     <string name="appwidget_text">Repair report</string>
     <string name="add_widget">Add widget</string>
     <string name="no_repairs">Hurray, no repairs needed!</string>
+    <string name="content_description_refresh_widget">Refresh widget</string>
     <plurals name="numberOfRepairs">
-        <item quantity="one">There is %d repair not fixed yet.</item>
-        <item quantity="other">There are %d repairs not fixed yet.</item>
+        <item quantity="one">There is %d repair to fix.</item>
+        <item quantity="other">There are %d repairs to fix.</item>
     </plurals>
 
     <!--Common strings-->
