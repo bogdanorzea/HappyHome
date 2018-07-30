@@ -246,7 +246,13 @@ public class ReadingEditorActivity extends AppCompatActivity {
 
         mReading.meter_id = mMeterId;
         mReading.date = getIsoFormatFromDateString(mReadingDateEditText.getText().toString());
-        mReading.value = Double.parseDouble(mReadingValueEditText.getText().toString());
+
+        String readingValueString = mReadingValueEditText.getText().toString();
+        if (!TextUtils.isEmpty(readingValueString)) {
+            mReading.value = Double.parseDouble(readingValueString);
+        } else {
+            mReading.value = 0.0;
+        }
 
         outState.putParcelable(READING_KEY, mReading);
     }

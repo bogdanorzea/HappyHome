@@ -282,7 +282,14 @@ public class BillEditorActivity extends AppCompatActivity {
         mBill.utility_id = mUtilityId;
         mBill.due_date = getIsoFormatFromDateString(mDueDateEditText.getText().toString());
         mBill.issue_date = getIsoFormatFromDateString(mIssueDateEditText.getText().toString());
-        mBill.value = Double.parseDouble(mBillValueEditText.getText().toString());
+
+        String billValueString = mBillValueEditText.getText().toString();
+        if (!TextUtils.isEmpty(billValueString)) {
+            mBill.value = Double.parseDouble(billValueString);
+        } else {
+            mBill.value = 0.0;
+        }
+
         mBill.paid = mIsPayedCheckBox.isChecked();
 
         outState.putParcelable(BILL_KEY, mBill);

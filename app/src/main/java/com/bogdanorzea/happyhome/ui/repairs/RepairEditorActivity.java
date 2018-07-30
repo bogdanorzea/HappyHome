@@ -307,7 +307,14 @@ public class RepairEditorActivity extends AppCompatActivity {
         mRepair.name = mNameEditText.getText().toString();
         mRepair.location = mLocationEditText.getText().toString();
         mRepair.description = mDescriptionEditText.getText().toString();
-        mRepair.cost = Double.parseDouble(mCostEditText.getText().toString());
+
+        String costValueString = mCostEditText.getText().toString();
+        if (!TextUtils.isEmpty(costValueString)) {
+            mRepair.cost = Double.parseDouble(costValueString);
+        } else {
+            mRepair.cost = 0.0;
+        }
+
         mRepair.fixed = mIsFixedCheckBox.isChecked();
 
         outState.putParcelable(REPAIR_KEY, mRepair);
