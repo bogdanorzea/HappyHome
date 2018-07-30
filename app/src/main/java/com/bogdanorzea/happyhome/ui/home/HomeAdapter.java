@@ -31,30 +31,31 @@ class HomeAdapter extends ArrayAdapter<Home> {
         }
 
         Home home = getItem(position);
+        if (home != null) {
+            TextView name = convertView.findViewById(R.id.text1);
+            name.setText(home.name);
 
-        TextView name = convertView.findViewById(R.id.text1);
-        name.setText(home.name);
-
-        TextView location = convertView.findViewById(R.id.text2);
-        location.setText(home.location);
+            TextView location = convertView.findViewById(R.id.text2);
+            location.setText(home.location);
 
 
-        ImageView icon = convertView.findViewById(R.id.icon);
+            ImageView icon = convertView.findViewById(R.id.icon);
 
-        Context context = getContext();
-        SharedPreferences sharedPref = context
-                .getSharedPreferences(context.getString(R.string.preferences_name), Context.MODE_PRIVATE);
-        String currentHomeId = sharedPref
-                .getString(context.getString(R.string.current_home_id), "");
+            Context context = getContext();
+            SharedPreferences sharedPref = context
+                    .getSharedPreferences(context.getString(R.string.preferences_name), Context.MODE_PRIVATE);
+            String currentHomeId = sharedPref
+                    .getString(context.getString(R.string.current_home_id), "");
 
-        if (currentHomeId.equals(home.id)) {
-            icon.setVisibility(View.VISIBLE);
-            icon.setImageResource(R.drawable.round_star_black_24);
-        } else {
-            icon.setVisibility(View.INVISIBLE);
+            if (currentHomeId.equals(home.id)) {
+                icon.setVisibility(View.VISIBLE);
+                icon.setImageResource(R.drawable.round_star_black_24);
+            } else {
+                icon.setVisibility(View.INVISIBLE);
+            }
+
+            convertView.setTag(home.id);
         }
-
-        convertView.setTag(home.id);
 
         return convertView;
     }

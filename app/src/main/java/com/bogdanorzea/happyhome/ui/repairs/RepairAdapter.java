@@ -28,14 +28,15 @@ class RepairAdapter extends ArrayAdapter<Repair> {
         }
 
         Repair repair = getItem(position);
+        if (repair != null) {
+            TextView name = convertView.findViewById(R.id.text1);
+            name.setText(repair.name);
 
-        TextView name = convertView.findViewById(R.id.text1);
-        name.setText(repair.name.toString());
+            TextView location = convertView.findViewById(R.id.text2);
+            location.setText(repair.location);
 
-        TextView location = convertView.findViewById(R.id.text2);
-        location.setText(repair.location);
-
-        convertView.setTag(repair.id);
+            convertView.setTag(repair.id);
+        }
 
         return convertView;
     }

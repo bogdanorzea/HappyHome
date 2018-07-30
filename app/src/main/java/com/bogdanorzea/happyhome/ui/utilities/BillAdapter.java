@@ -38,7 +38,7 @@ class BillAdapter extends ArrayAdapter<Bill> {
             TextView location = convertView.findViewById(R.id.text2);
             location.setText(getReadableFormatFromDateString(item.issue_date));
 
-            convertView.setTag(item);
+            convertView.setTag(item.id);
         }
 
         return convertView;

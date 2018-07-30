@@ -28,14 +28,15 @@ class UtilityAdapter extends ArrayAdapter<Utility> {
         }
 
         Utility utility = getItem(position);
+        if (utility != null) {
+            TextView name = convertView.findViewById(R.id.text1);
+            name.setText(utility.name);
 
-        TextView name = convertView.findViewById(R.id.text1);
-        name.setText(utility.name);
+            TextView location = convertView.findViewById(R.id.text2);
+            location.setText(utility.company_name);
 
-        TextView location = convertView.findViewById(R.id.text2);
-        location.setText(utility.company_name);
-
-        convertView.setTag(utility.id);
+            convertView.setTag(utility.id);
+        }
 
         return convertView;
     }

@@ -101,8 +101,7 @@ public class BillsActivity extends AppCompatActivity {
                 intent.putExtra("userUid", mUserUid);
                 intent.putExtra("homeId", mHomeId);
                 intent.putExtra("utilityId", mUtilityId);
-                intent.putExtra("billName", ((Bill) view.getTag()).issue_date.toString());
-                intent.putExtra("billId", ((Bill) view.getTag()).id.toString());
+                intent.putExtra("billId", view.getTag().toString());
                 startActivity(intent);
             }
         });
